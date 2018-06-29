@@ -6,3 +6,6 @@ class IsAuthorOrAdmin(BasePermission):
         if request.user.is_superuser:
             return True
         return obj.pk == request.user.pk
+
+    def has_permission(self, request, view):
+        return request.user.is_authenticated

@@ -18,13 +18,13 @@ class TodoListViewTestCase(TestCase):
     def test_authorization_enforced(self):
         self.client.force_authenticate(None)
         todo = TodoList.objects.get()
-        response = self.client.get(reverse('details', kwargs={'pk': todo.id}))
+        response = self.client.get(reverse('todolist-detail', kwargs={'pk': todo.id}))
         self.assertEqual(response.status_code, status.HTTP_403_FORBIDDEN)
 
     def test_create_todo_list(self):
         data = {'name': 'My First ToDo List', 'author': self.user.id}
         response = self.client.post(
-            reverse('create'),
+            reverse('todolist-list'),
             data,
             format='json'
         )
@@ -34,7 +34,7 @@ class TodoListViewTestCase(TestCase):
     def test_get_todo_list(self):
         todo = TodoList.objects.get()
         response = self.client.get(
-            reverse('details', kwargs={'pk': todo.id}),
+            reverse('todolist-detail', kwargs={'pk': todo.id}),
             format='json'
         )
 
@@ -45,7 +45,7 @@ class TodoListViewTestCase(TestCase):
         todo = TodoList.objects.get()
         new_data = {'name': 'Supa List'}
         response = self.client.patch(
-            reverse('details', kwargs={'pk': todo.id}),
+            reverse('todolist-detail', kwargs={'pk': todo.id}),
             new_data,
             format='json'
         )
@@ -55,7 +55,7 @@ class TodoListViewTestCase(TestCase):
     def test_delete_todo_list(self):
         todo = TodoList.objects.get()
         response = self.client.delete(
-            reverse('details', kwargs={'pk': todo.id}),
+            reverse('todolist-detail', kwargs={'pk': todo.id}),
             format='json',
             follow=True
         )
