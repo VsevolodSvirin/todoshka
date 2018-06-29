@@ -5,6 +5,8 @@ from api.models import TodoList
 
 
 class TodoListTestCase(TestCase):
+
+    # TODO research if more tests needed
     def test_create_todo_list(self):
         user = User.objects.create(username='Cool Guy')
         old_count = TodoList.objects.count()
