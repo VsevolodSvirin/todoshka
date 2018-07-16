@@ -1,8 +1,8 @@
-from django.contrib.auth.models import User
 from django.test import TestCase
 
 from api.models import TodoList
 from api.serializers import TodoListSerializer
+from users.models import User
 
 
 class TodoListSerializerTestCase(TestCase):

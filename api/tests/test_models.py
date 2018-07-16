@@ -1,7 +1,7 @@
-from django.contrib.auth.models import User
 from django.test import TestCase
 
 from api.models import TodoList
+from users.models import User
 
 
 class TodoListTestCase(TestCase):
