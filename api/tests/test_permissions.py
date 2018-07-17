@@ -12,8 +12,9 @@ class PermissionsTestCase(TestCase):
         self.mock_request = Mock()
         self.permission = IsAuthorOrAdmin()
 
-        self.user = User.objects.create_user(username='Awesome Bob')
-        self.user_2 = User.objects.create_user(username='Magnificent Jane')
+        self.user = User.objects.create_user(username='Awesome Bob', email='awesome@bob.com', password='123')
+        self.user_2 = User.objects.create_user(username='Magnificent Jane', email='magnificent@jane.com',
+                                               password='123')
         self.admin = User.objects.create_superuser(username='Reckless Joe', email='lul@olo.lo', password='12345678')
 
         self.user_todo_list = TodoList.objects.create(name='Bobby\'s List', author=self.user)

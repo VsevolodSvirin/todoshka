@@ -7,7 +7,9 @@ from users.serializers import UserSerializer
 class UserSerializerTestCase(TestCase):
     def setUp(self):
         self.user_attrs = {
-            'username': 'Cool Guy'
+            'username': 'Cool Guy',
+            'email': 'cool_guy@smedialink.com',
+            'password': '123'
         }
 
         self.user_obj = User.objects.create(**self.user_attrs)
@@ -16,9 +18,10 @@ class UserSerializerTestCase(TestCase):
     def test_contains_expected_fields(self):
         data = self.user_serialized.data
 
-        self.assertCountEqual(data.keys(), {'username'})
+        self.assertCountEqual(data.keys(), {'username', 'email'})
 
     def test_fields_content(self):
         data = self.user_serialized.data
 
         self.assertEqual(data['username'], self.user_attrs['username'])
+        self.assertEqual(data['email'], self.user_attrs['email'])
