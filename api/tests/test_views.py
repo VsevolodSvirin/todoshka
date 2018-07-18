@@ -11,18 +11,23 @@ from users.models import User
 class TodoListViewTestCase(TestCase):
     def setUp(self):
         self.client = APIClient()
-        self.user = User.objects.create(username='Cool Guy', email='cool_guy@smedilink.com', password='123')
+        self.user = User.objects.create(username='Cool Guy',
+                                        email='cool_guy@smedilink.com',
+                                        password='123')
         self.client.force_authenticate(user=self.user)
-        TodoList.objects.create(name='This is a List', author=self.user)
+        TodoList.objects.create(name='This is a List',
+                                author=self.user)
 
     def test_authorization_enforced(self):
         self.client.force_authenticate(None)
         todo = TodoList.objects.get()
-        response = self.client.get(reverse('todolist-detail', kwargs={'pk': todo.id}))
+        response = self.client.get(reverse('todolist-detail',
+                                           kwargs={'pk': todo.id}))
         self.assertEqual(response.status_code, status.HTTP_403_FORBIDDEN)
 
     def test_create_todo_list(self):
-        data = {'name': 'My First ToDo List', 'author': self.user.id}
+        data = {'name': 'My First ToDo List',
+                'author': self.user.id}
         response = self.client.post(
             reverse('todolist-list'),
             data,
@@ -34,7 +39,8 @@ class TodoListViewTestCase(TestCase):
     def test_get_todo_list(self):
         todo = TodoList.objects.get()
         response = self.client.get(
-            reverse('todolist-detail', kwargs={'pk': todo.id}),
+            reverse('todolist-detail',
+                    kwargs={'pk': todo.id}),
             format='json'
         )
 

@@ -7,7 +7,9 @@ from users.models import User
 
 class TodoListSerializerTestCase(TestCase):
     def setUp(self):
-        self.user = User.objects.create_user(username='Cool Guy', email='cool_guy@smedialink.com', password='123')
+        self.user = User.objects.create_user(username='Cool Guy',
+                                             email='cool_guy@smedialink.com',
+                                             password='123')
         self.todo_attrs = {
             'name': 'My ToDo List',
             'author': self.user
