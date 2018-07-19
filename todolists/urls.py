@@ -2,7 +2,7 @@ from django.conf.urls import url
 from django.urls import include
 from rest_framework.routers import DefaultRouter
 
-from api.views import TodoListViewSet
+from todolists.views import TodoListViewSet
 
 
 router = DefaultRouter()

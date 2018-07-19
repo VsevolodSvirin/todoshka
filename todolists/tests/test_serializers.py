@@ -1,7 +1,7 @@
 from django.test import TestCase
 
-from api.models import TodoList
-from api.serializers import TodoListSerializer
+from todolists.models import TodoList
+from todolists.serializers import TodoListSerializer
 from users.models import User
 
 

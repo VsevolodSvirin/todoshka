@@ -1,6 +1,6 @@
 from rest_framework.serializers import ModelSerializer
 
-from api.models import TodoList
+from todolists.models import TodoList
 
 
 class TodoListSerializer(ModelSerializer):

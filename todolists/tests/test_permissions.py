@@ -2,8 +2,8 @@ from unittest.mock import Mock
 
 from django.test import TestCase
 
-from api.models import TodoList
-from api.permissions import IsAuthorOrAdmin
+from todolists.models import TodoList
+from todolists.permissions import IsAuthorOrAdmin
 from users.models import User
 
 
