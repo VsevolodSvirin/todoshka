@@ -12,7 +12,7 @@ class UserSerializerTestCase(TestCase):
             'password': '123'
         }
 
-        self.user_obj = User.objects.create(**self.user_attrs)
+        self.user_obj = User.objects.create_user(**self.user_attrs)
         self.user_serialized = UserSerializer(instance=self.user_obj)
 
     def test_contains_expected_fields(self):
