@@ -28,7 +28,7 @@ class User(AbstractUser):
         },
     )
 
-    email = models.EmailField(_('email address'), null=False, blank=False)
+    email = models.EmailField(_('email address'), null=False, blank=False, unique=True)
 
 
 @receiver(pre_save, sender=User)

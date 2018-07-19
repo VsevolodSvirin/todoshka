@@ -21,10 +21,11 @@ class UserSerializerTestCase(TestCase):
     def test_contains_expected_fields(self):
         data = self.user_serialized.data
 
-        self.assertEqual(set(data.keys()), {'id', 'username', 'email'})
+        self.assertEqual(set(data.keys()), {'id', 'username', 'email', 'password'})
 
     def test_fields_content(self):
         data = self.user_serialized.data
 
         self.assertEqual(data['username'], self.user_attrs['username'])
         self.assertEqual(data['email'], self.user_attrs['email'])
+        self.assertEqual(data['password'], self.user_attrs['password'])
