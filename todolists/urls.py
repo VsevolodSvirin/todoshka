@@ -9,7 +9,5 @@ router = DefaultRouter()
 router.register(r'todolists', TodoListViewSet)
 
 urlpatterns = [
-    url(r'auth/', include('rest_framework.urls', namespace='rest_framework')),
-
     url(r'^', include(router.urls)),
 ]
