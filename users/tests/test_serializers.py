@@ -18,7 +18,7 @@ class UserSerializerTestCase(TestCase):
     def test_contains_expected_fields(self):
         data = self.user_serialized.data
 
-        self.assertCountEqual(data.keys(), {'username', 'email'})
+        self.assertCountEqual(data.keys(), {'id', 'username', 'email'})
 
     def test_fields_content(self):
         data = self.user_serialized.data

@@ -21,7 +21,7 @@ class TodoListSerializerTestCase(TestCase):
     def test_contains_expected_fields(self):
         data = self.todo_serialized.data
 
-        self.assertCountEqual(data.keys(), {'name', 'author', 'date_created', 'date_modified'})
+        self.assertCountEqual(data.keys(), {'id', 'name', 'author', 'date_created', 'date_modified'})
 
     def test_fields_content(self):
         data = self.todo_serialized.data

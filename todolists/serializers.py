@@ -6,5 +6,5 @@ from todolists.models import TodoList
 class TodoListSerializer(ModelSerializer):
     class Meta:
         model = TodoList
-        fields = ('name', 'author', 'date_created', 'date_modified')
-        read_only_fields = ('date_created', 'date_modified')
+        fields = ('id', 'name', 'author', 'date_created', 'date_modified')
+        read_only_fields = ('id', 'date_created', 'date_modified')
