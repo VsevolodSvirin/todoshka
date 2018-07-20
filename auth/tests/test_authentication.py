@@ -51,6 +51,6 @@ class JWTAuthenticationTestCase(TestCase):
         self.assertEqual(r.status_code, HTTP_404_NOT_FOUND)
 
     def test_refresh(self):
-        tokens = get_token_pair(self.user)
+        # tokens = get_token_pair(self.user)
 
         assert False
