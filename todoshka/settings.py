@@ -125,4 +125,4 @@ USE_TZ = True
 
 STATIC_URL = '/static/'
 
-JWT_LIFE_TIME = 60*60  # 1 hour
+JWT_LIFE_TIME = 60 * 60  # 1 hour
