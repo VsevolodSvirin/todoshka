@@ -1,12 +1,15 @@
 import time
 
+from django.contrib.auth import get_user_model
 from django.test import TestCase
 from django.urls import reverse
 from rest_framework.status import HTTP_404_NOT_FOUND, HTTP_200_OK
 from rest_framework.test import APIClient
 
 from auth.authentication import get_user_by_jwt, create_jwt, get_token_pair
-from users.models import User
+
+
+User = get_user_model()
 
 
 class JWTAuthenticationTestCase(TestCase):

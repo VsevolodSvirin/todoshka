@@ -1,10 +1,13 @@
 from unittest.mock import Mock
 
+from django.contrib.auth import get_user_model
 from django.test import TestCase
 
 from todolists.models import TodoList
 from todolists.permissions import IsAuthorOrAdmin
-from users.models import User
+
+
+User = get_user_model()
 
 
 class PermissionsTestCase(TestCase):
