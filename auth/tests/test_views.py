@@ -19,6 +19,7 @@ class RegisterTestCase(APITestCase):
     def test_register_success(self):
         response = self.client.post(self.url, self.user_attrs)
         self.assertTrue(status.is_success(response.status_code))
+        User.objects.get().delete()
 
     def test_missed_fields_fail(self):
         user_attrs_1 = {
@@ -44,6 +45,7 @@ class RegisterTestCase(APITestCase):
         self.assertTrue(status.is_client_error(response.status_code))
 
     def test_user_already_exists_fail(self):
+        self.client.post(self.url, self.user_attrs)
         response = self.client.post(self.url, self.user_attrs)
         self.assertTrue(status.is_client_error(response.status_code))
 
@@ -52,6 +54,9 @@ class LoginTestCase(APITestCase):
     def setUp(self):
         self.url = reverse('auth:login')
         self.user = User.objects.create_user(username='Cool Guy', email='cool_guy@smedialink.com', password='123')
+
+    def tearDown(self):
+        self.user.delete()
 
     def test_login_success(self):
         response = self.client.post(self.url, {'username': 'Cool Guy', 'password': '123'})
