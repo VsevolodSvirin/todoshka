@@ -1,6 +1,13 @@
-def login(request, *args, **kwargs):
+from rest_framework.views import APIView
+
+
+class RegisterView(APIView):
     pass
 
 
-def refresh(request, *args, **kwargs):
+class LoginView(APIView):
+    pass
+
+
+class RefreshView(APIView):
     pass
