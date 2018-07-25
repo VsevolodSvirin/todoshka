@@ -29,7 +29,7 @@ class TodoListViewTestCase(TestCase):
         self.client.force_authenticate(None)
         response = self.client.get(reverse('todolist-detail',
                                            kwargs={'pk': self.todolist.id}))
-        self.assertEqual(response.status_code, status.HTTP_403_FORBIDDEN)
+        self.assertTrue(status.is_client_error(response.status_code))
 
     def test_create_todo_list(self):
         data = {'name': 'My First ToDo List',
@@ -40,7 +40,7 @@ class TodoListViewTestCase(TestCase):
             format='json'
         )
 
-        self.assertEqual(response.status_code, status.HTTP_201_CREATED)
+        self.assertTrue(status.is_success(response.status_code))
 
     def test_get_todo_list(self):
         response = self.client.get(
@@ -49,7 +49,7 @@ class TodoListViewTestCase(TestCase):
             format='json'
         )
 
-        self.assertEqual(response.status_code, status.HTTP_200_OK)
+        self.assertTrue(status.is_success(response.status_code))
         self.assertEqual(response.data, TodoListSerializer().to_representation(self.todolist))
 
     def test_update_todo_list(self):
@@ -61,7 +61,7 @@ class TodoListViewTestCase(TestCase):
             format='json'
         )
 
-        self.assertEqual(response.status_code, status.HTTP_200_OK)
+        self.assertTrue(status.is_success(response.status_code))
 
     def test_delete_todo_list(self):
         response = self.client.delete(
@@ -70,4 +70,4 @@ class TodoListViewTestCase(TestCase):
             follow=True
         )
 
-        self.assertEqual(response.status_code, status.HTTP_204_NO_CONTENT)
+        self.assertTrue(status.is_success(response.status_code))

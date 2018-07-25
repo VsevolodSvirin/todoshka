@@ -1,7 +1,6 @@
 from django.contrib.auth import get_user_model
 from django.urls import reverse
 from rest_framework import status
-from rest_framework.status import HTTP_404_NOT_FOUND, HTTP_200_OK
 from rest_framework.test import APITestCase
 
 
@@ -55,21 +54,21 @@ class LoginTestCase(APITestCase):
         self.user = User.objects.create_user(username='Cool Guy', email='cool_guy@smedialink.com', password='123')
 
     def test_login_success(self):
-        request = self.client.post(self.url, {'username': 'Cool Guy', 'password': '123'})
-        self.assertEqual(request.status_code, HTTP_200_OK)
-        self.assertEqual(set(request.data.keys()), {'user', 'access_token', 'refresh_token'})
-        self.assertIn('id', request.data['user'])
+        response = self.client.post(self.url, {'username': 'Cool Guy', 'password': '123'})
+        self.assertTrue(status.is_success(response.status_code))
+        self.assertEqual(set(response.data.keys()), {'user', 'access_token', 'refresh_token'})
+        self.assertIn('id', response.data['user'])
 
     def test_login_fail_with_incorrect_user(self):
-        request = self.client.post(self.url, {'username': 'Bad Guy', 'password': '321'})
-        self.assertEqual(request.status_code, HTTP_404_NOT_FOUND)
-        self.assertIn('non_field_errors', request.data)
+        response = self.client.post(self.url, {'username': 'Bad Guy', 'password': '321'})
+        self.assertTrue(status.is_client_error(response.status_code))
+        self.assertIn('non_field_errors', response.data)
 
     def test_login_fail_with_inactive_user(self):
         self.user.is_active = False
         self.user.save()
-        request = self.client.post(self.url, {'username': 'Cool Guy', 'password': '123'})
-        self.assertEqual(request.status_code, HTTP_404_NOT_FOUND)
+        response = self.client.post(self.url, {'username': 'Cool Guy', 'password': '123'})
+        self.assertTrue(status.is_client_error(response.status_code))
 
 
 class RefreshTestCase(APITestCase):
