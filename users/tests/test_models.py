@@ -8,12 +8,14 @@ class UserTestCase(TestCase):
     def test_create_user_success(self):
         old_count = User.objects.count()
 
-        User.objects.create_user(username='Cool Guy',
-                                 email='cool_guy@smedilink.com',
-                                 password='123')
+        user = User.objects.create_user(username='Cool Guy',
+                                        email='cool_guy@smedilink.com',
+                                        password='123')
         new_count = User.objects.count()
 
         self.assertEqual(old_count + 1, new_count)
+
+        user.delete()
 
     def test_bad_username_fail(self):
         with self.assertRaises(ValidationError):

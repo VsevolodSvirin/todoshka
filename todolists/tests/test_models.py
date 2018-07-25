@@ -20,3 +20,6 @@ class TodoListTestCase(TestCase):
         new_count = TodoList.objects.count()
 
         self.assertEqual(old_count + 1, new_count)
+
+        user.delete()
+        todolist.delete()

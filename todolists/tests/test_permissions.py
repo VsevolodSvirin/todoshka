@@ -28,6 +28,12 @@ class PermissionsTestCase(TestCase):
         self.user_todo_list = TodoList.objects.create(name='Bobby\'s List',
                                                       author=self.user)
 
+    def tearDown(self):
+        self.user.delete()
+        self.user_2.delete()
+        self.admin.delete()
+        self.user_todo_list.delete()
+
     def test_admin_can_edit_everything(self):
         self.mock_request.user = self.admin
         response = self.permission.has_object_permission(self.mock_request, None, self.user_todo_list)

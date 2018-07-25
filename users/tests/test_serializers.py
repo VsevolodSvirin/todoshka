@@ -15,6 +15,9 @@ class UserSerializerTestCase(TestCase):
         self.user_obj = User.objects.create_user(**self.user_attrs)
         self.user_serialized = UserSerializer(instance=self.user_obj)
 
+    def tearDown(self):
+        self.user_obj.delete()
+
     def test_contains_expected_fields(self):
         data = self.user_serialized.data
 

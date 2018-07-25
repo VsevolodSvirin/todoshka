@@ -21,6 +21,10 @@ class TodoListSerializerTestCase(TestCase):
         self.todo_obj = TodoList.objects.create(**self.todo_attrs)
         self.todo_serialized = TodoListSerializer(instance=self.todo_obj)
 
+    def tearDown(self):
+        self.user.delete()
+        self.todo_obj.delete()
+
     def test_contains_expected_fields(self):
         data = self.todo_serialized.data
 

@@ -18,14 +18,17 @@ class TodoListViewTestCase(TestCase):
                                              email='cool_guy@smedilink.com',
                                              password='123')
         self.client.force_authenticate(user=self.user)
-        TodoList.objects.create(name='This is a List',
-                                author=self.user)
+        self.todolist = TodoList.objects.create(name='This is a List',
+                                                author=self.user)
+
+    def tearDown(self):
+        self.user.delete()
+        self.todolist.delete()
 
     def test_authorization_enforced(self):
         self.client.force_authenticate(None)
-        todo = TodoList.objects.get()
         response = self.client.get(reverse('todolist-detail',
-                                           kwargs={'pk': todo.id}))
+                                           kwargs={'pk': self.todolist.id}))
         self.assertEqual(response.status_code, status.HTTP_403_FORBIDDEN)
 
     def test_create_todo_list(self):
@@ -40,15 +43,14 @@ class TodoListViewTestCase(TestCase):
         self.assertEqual(response.status_code, status.HTTP_201_CREATED)
 
     def test_get_todo_list(self):
-        todo = TodoList.objects.get()
         response = self.client.get(
             reverse('todolist-detail',
-                    kwargs={'pk': todo.id}),
+                    kwargs={'pk': self.todolist.id}),
             format='json'
         )
 
         self.assertEqual(response.status_code, status.HTTP_200_OK)
-        self.assertEqual(response.data, TodoListSerializer().to_representation(todo))
+        self.assertEqual(response.data, TodoListSerializer().to_representation(self.todolist))
 
     def test_update_todo_list(self):
         todo = TodoList.objects.get()
@@ -62,9 +64,8 @@ class TodoListViewTestCase(TestCase):
         self.assertEqual(response.status_code, status.HTTP_200_OK)
 
     def test_delete_todo_list(self):
-        todo = TodoList.objects.get()
         response = self.client.delete(
-            reverse('todolist-detail', kwargs={'pk': todo.id}),
+            reverse('todolist-detail', kwargs={'pk': self.todolist.id}),
             format='json',
             follow=True
         )
