@@ -43,8 +43,8 @@ def get_token_payload(token, secret_key=SECRET_KEY):
         return None
 
 
-def get_user_by_jwt(jwt):
-    payload = get_token_payload(jwt)
+def get_user_by_jwt(token):
+    payload = get_token_payload(token)
     user_model = get_user_model()
     try:
         return user_model.objects.get(id=payload.get('user_id'))
