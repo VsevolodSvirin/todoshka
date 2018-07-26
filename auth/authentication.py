@@ -2,17 +2,29 @@ from time import time
 
 import jwt
 from django.contrib.auth import get_user_model
+from django.urls import reverse
 from rest_framework.authentication import BaseAuthentication
 
 from todoshka.settings import SECRET_KEY, JWT_LIFE_TIME
 
 
 class JWTAuthentication(BaseAuthentication):
+    # TODO Unit test dis shiet
     def authenticate(self, request):
-        pass
+        if 'HTTP_AUTHORIZATION' not in request.META:
+            return None
+
+        access_token = request.META.get('HTTP_AUTHORIZATION')
+
+        user = get_user_by_jwt(access_token)
+
+        if user is not None and user.is_active:
+            return user, None
+        return None
 
     def authenticate_header(self, request):
-        pass
+        endpoint = 'refresh' if 'HTTP_AUTHORIZATION' in request.META else 'login'
+        return reverse('auth:{}'. format(endpoint))
 
 
 def create_jwt(user_id, life_time=JWT_LIFE_TIME, secret_key=SECRET_KEY):
