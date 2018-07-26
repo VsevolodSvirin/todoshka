@@ -3,8 +3,8 @@ from rest_framework import status
 from rest_framework.response import Response
 from rest_framework.views import APIView
 
-from auth.authentication import get_token_pair
-from auth.serializers import RegisterSerializer, LoginSerializer
+from auth.authentication import get_token_pair, get_token_payload
+from auth.serializers import RegisterSerializer, LoginSerializer, RefreshSerializer
 from users.serializers import UserSerializer
 
 User = get_user_model()
@@ -41,4 +41,21 @@ class LoginView(APIView):
 
 
 class RefreshView(APIView):
-    pass
+    def post(self, request, **kwargs):
+        serialized_request = RefreshSerializer(data=request.data)
+        if not serialized_request.is_valid():
+            return Response(serialized_request.errors,
+                            status=status.HTTP_400_BAD_REQUEST)
+
+        access_token_payload = get_token_payload(serialized_request.data['access_token'])
+        refresh_token = serialized_request.data['refresh_token']
+        user = User.objects.filter(id=access_token_payload['user_id']).first()
+        actual_refresh_token = 'trololo'
+        # actual_refresh_token = user.refresh_token  # FIXME: implementation of refresh token in User model needed
+
+        if actual_refresh_token != refresh_token:
+            return Response(
+                {'non_field_errors': ['Wrong token pair']},
+                status=status.HTTP_400_BAD_REQUEST
+            )
+        return Response({'user': UserSerializer(user).data, **get_token_pair(user)})

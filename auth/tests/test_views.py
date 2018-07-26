@@ -3,6 +3,8 @@ from django.urls import reverse
 from rest_framework import status
 from rest_framework.test import APITestCase
 
+from auth.authentication import get_token_pair
+
 User = get_user_model()
 
 
@@ -78,6 +80,31 @@ class LoginTestCase(APITestCase):
 
 
 class RefreshTestCase(APITestCase):
+    def setUp(self):
+        self.url = reverse('auth:refresh')
+        self.user = User.objects.create_user(username='Cool Guy',
+                                             email='cool_guy@smedialink.com',
+                                             password='123')
+        self.tokens = get_token_pair(self.user)
+
+    def tearDown(self):
+        self.user.delete()
+
     def test_refresh_success(self):
-        # tokens = get_token_pair(self.user)
-        assert False
+        response = self.client.post(self.url, self.tokens)
+        self.assertTrue(status.is_success(response.status_code))
+
+    def test_refresh_failure(self):
+        access_token_missing = {'refresh_token': self.tokens['refresh_token']}
+        response = self.client.post(self.url, access_token_missing)
+        self.assertTrue(status.is_client_error(response.status_code))
+
+        refresh_token_missing = {'access_token': self.tokens['access_token']}
+        response = self.client.post(self.url, refresh_token_missing)
+        self.assertTrue(status.is_client_error(response.status_code))
+
+    def test_tokens_invalid(self):
+        wrong_refresh_token = {'access_token': self.tokens['access_token'],
+                               'refresh_token': 'This is a token, trust me!'}
+        response = self.client.post(self.url, wrong_refresh_token)
+        self.assertTrue(status.is_client_error(response.status_code))
