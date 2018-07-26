@@ -1,5 +1,3 @@
-import time
-
 from django.contrib.auth import get_user_model
 from django.test import TestCase
 
@@ -20,8 +18,7 @@ class JWTAuthenticationTestCase(TestCase):
         self.assertEqual(user, self.user)
 
     def test_token_expired(self):
-        token = create_jwt(self.user.id, life_time=0)
-        time.sleep(1)
+        token = create_jwt(self.user.id, life_time=-1)
         user = get_user_by_jwt(token)
         self.assertIsNone(user)
 
