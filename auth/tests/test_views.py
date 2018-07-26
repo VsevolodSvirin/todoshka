@@ -52,7 +52,9 @@ class RegisterTestCase(APITestCase):
 class LoginTestCase(APITestCase):
     def setUp(self):
         self.url = reverse('auth:login')
-        self.user = User.objects.create_user(username='Cool Guy', email='cool_guy@smedialink.com', password='123')
+        self.user = User.objects.create_user(username='Cool Guy',
+                                             email='cool_guy@smedialink.com',
+                                             password='123')
 
     def tearDown(self):
         self.user.delete()

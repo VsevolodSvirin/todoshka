@@ -2,8 +2,8 @@ from django.contrib.auth import get_user_model
 from django.test import TestCase
 from rest_framework.exceptions import ValidationError
 
-from auth.serializers import LoginSerializer, RegisterSerializer
-
+from auth.authentication import get_token_pair
+from auth.serializers import LoginSerializer, RegisterSerializer, RefreshSerializer
 
 User = get_user_model()
 
@@ -93,4 +93,35 @@ class LoginSerializerTestCase(TestCase):
 
 
 class RefreshTokenSerializerTestCase(TestCase):
-    pass
+    def setUp(self):
+        self.user = User.objects.create_user(username='Cool Guy',
+                                             email='cool_guy@smedialink.com',
+                                             password='123')
+        self.tokens = get_token_pair(self.user)
+        self.tokens_serialized = RefreshSerializer(data=self.tokens)
+        self.tokens_serialized.is_valid(raise_exception=True)
+
+    def tearDown(self):
+        self.user.delete()
+
+    def test_contains_expected_fields_without_token(self):
+        data = self.tokens_serialized.data
+
+        self.assertEqual(set(data.keys()), {'access_token', 'refresh_token'})
+
+    def test_fields_content(self):
+        data = self.tokens_serialized.data
+
+        self.assertEqual(data['access_token'], self.tokens['access_token'])
+        self.assertEqual(data['refresh_token'], self.tokens['refresh_token'])
+
+    def test_required_fields(self):
+        refresh_token_missing = self.tokens['access_token']
+        tokens_serialized = RefreshSerializer(data=refresh_token_missing)
+        with self.assertRaises(ValidationError):
+            tokens_serialized.is_valid(raise_exception=True)
+
+        access_token_missing = self.tokens['refresh_token']
+        tokens_serialized = RefreshSerializer(data=access_token_missing)
+        with self.assertRaises(ValidationError):
+            tokens_serialized.is_valid(raise_exception=True)

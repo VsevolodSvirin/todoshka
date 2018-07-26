@@ -26,3 +26,8 @@ class LoginSerializer(Serializer):
             error = {'non_field_errors': ['Username with password should be provided']}
             raise ValidationError(detail=error)
         return data
+
+
+class RefreshSerializer(Serializer):
+    access_token = CharField(required=True)
+    refresh_token = CharField(required=True)
