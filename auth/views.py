@@ -3,8 +3,9 @@ from rest_framework import status
 from rest_framework.response import Response
 from rest_framework.views import APIView
 
-from auth.serializers import RegisterSerializer
-
+from auth.authentication import get_user_by_jwt, get_token_pair
+from auth.serializers import RegisterSerializer, LoginSerializer
+from users.serializers import UserSerializer
 
 User = get_user_model()
 
@@ -24,7 +25,25 @@ class RegisterView(APIView):
 
 
 class LoginView(APIView):
-    pass
+    def post(self, request, **kwargs):
+        serialized_request = LoginSerializer(data=request.data)
+        if not serialized_request.is_valid():
+            return Response(serialized_request.errors,
+                            status=status.HTTP_400_BAD_REQUEST)
+
+        if 'token' in serialized_request.data:
+            token = serialized_request.data['token']
+            user = get_user_by_jwt(token)
+            return Response({'user': UserSerializer(user).data, **get_token_pair(user)})
+        else:
+            user = User.objects.filter(username=serialized_request.data['username'], is_active=True).first()
+            if not user or not user.check_password(serialized_request.data['password']):
+                return Response(
+                    {'non_field_errors': ['Wrong username or password']},
+                    status=status.HTTP_401_UNAUTHORIZED
+                )
+
+        return Response(serialized_request.errors, status=status.HTTP_400_BAD_REQUEST)
 
 
 class RefreshView(APIView):

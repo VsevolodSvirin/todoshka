@@ -3,6 +3,7 @@ from django.urls import reverse
 from rest_framework import status
 from rest_framework.test import APITestCase
 
+from auth.authentication import get_token_pair
 
 User = get_user_model()
 
@@ -74,6 +75,21 @@ class LoginTestCase(APITestCase):
         self.user.save()
         response = self.client.post(self.url, {'username': 'Cool Guy', 'password': '123'})
         self.assertTrue(status.is_client_error(response.status_code))
+
+    def test_login_with_token(self):
+        response = self.client.post(self.url, {'token': 'bad_token'})
+        self.assertTrue(status.is_client_error(response.status_code))
+
+        user_tokens = get_token_pair(self.user)
+
+        response = self.client.post(
+            self.url,
+            {'token': user_tokens['access_token'], 'username': 'user', 'password': 'password'}
+        )
+        self.assertTrue(status.is_client_error(response.status_code))
+
+        response = self.client.post(self.url, {'token': user_tokens['access_token']})
+        self.assertTrue(status.is_success(response.status_code))
 
 
 class RefreshTestCase(APITestCase):
