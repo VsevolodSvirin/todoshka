@@ -87,10 +87,6 @@ class LoginSerializerTestCase(TestCase):
         with self.assertRaises(ValidationError):
             user_serialized.is_valid(raise_exception=True)
 
-    def test_validation(self):
-        self.assertEqual(self.user_serialized.validate(data=self.user_serialized.data),
-                         self.user_serialized.data)
-
 
 class RefreshTokenSerializerTestCase(TestCase):
     def setUp(self):

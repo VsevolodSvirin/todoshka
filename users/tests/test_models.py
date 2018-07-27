@@ -24,12 +24,17 @@ class UserTestCase(TestCase):
                                      password='123')
 
     def test_missing_fields_fail(self):
-        with self.assertRaises(ValidationError):
-            User.objects.create_user(username='Bad Guy',
-                                     email='bad_guy@smedilink.com')
+        # If password is None then return a concatenation of UNUSABLE_PASSWORD_PREFIX and
+        # a random string, which disallows logins. See django.contrib.auth.hashers.make_password.
+        user = User.objects.create_user(username='Bad Guy',
+                                        email='bad_guy@smedilink.com')
+        self.assertTrue(user.password.startswith('!'))
 
+        with self.assertRaises(ValidationError):
             User.objects.create_user(username='Bad Guy',
                                      password='321')
 
+        # Username is a required positional argument.
+        with self.assertRaises(TypeError):
             User.objects.create_user(email='bad_guy@smedilink.com',
                                      password='321')

@@ -67,6 +67,13 @@ class LoginTestCase(APITestCase):
         self.assertEqual(set(response.data.keys()), {'user', 'access_token', 'refresh_token'})
         self.assertIn('id', response.data['user'])
 
+    def test_missing_fields_failure(self):
+        response = self.client.post(self.url, {'username': 'Bad Guy'})
+        self.assertTrue(status.is_client_error(response.status_code))
+
+        response = self.client.post(self.url, {'username': 'Bad Guy'})
+        self.assertTrue(status.is_client_error(response.status_code))
+
     def test_login_fail_with_incorrect_user(self):
         response = self.client.post(self.url, {'username': 'Bad Guy', 'password': '321'})
         self.assertTrue(status.is_client_error(response.status_code))
@@ -103,7 +110,7 @@ class RefreshTestCase(APITestCase):
         response = self.client.post(self.url, refresh_token_missing)
         self.assertTrue(status.is_client_error(response.status_code))
 
-    def test_tokens_invalid(self):
+    def test_token_is_invalid(self):
         wrong_refresh_token = {'access_token': self.tokens['access_token'],
                                'refresh_token': 'This is a token, trust me!'}
         response = self.client.post(self.url, wrong_refresh_token)
