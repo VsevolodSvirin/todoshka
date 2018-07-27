@@ -15,7 +15,7 @@ class TodoListViewTestCase(TestCase):
     def setUp(self):
         self.client = APIClient()
         self.user = User.objects.create_user(username='Cool Guy',
-                                             email='cool_guy@smedilink.com',
+                                             email='cool_guy@smedialink.com',
                                              password='123')
         self.client.force_authenticate(user=self.user)
         self.todolist = TodoList.objects.create(name='This is a List',

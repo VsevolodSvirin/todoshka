@@ -1,3 +1,7 @@
+import base64
+import os
+import time
+
 from django.contrib.auth.models import AbstractUser
 from django.contrib.auth.validators import UnicodeUsernameValidator
 from django.db import models
@@ -29,6 +33,22 @@ class User(AbstractUser):
     )
 
     email = models.EmailField(_('email address'), null=False, blank=False, unique=True)
+    refresh_token = models.CharField(max_length=255, null=True, blank=True)
+    refresh_token_issued_at = models.IntegerField(default=0)
+
+    def get_refresh_token(self):
+        if self.refresh_token is None:
+            self.update_refresh_token()
+        return self.refresh_token
+
+    def update_refresh_token(self):
+        self.refresh_token = get_random_token()
+        self.refresh_token_issued_at = time.time()
+        self.save(update_fields=['refresh_token_issued_at', 'refresh_token'])
+
+
+def get_random_token(length=128):
+    return base64.b64encode(os.urandom(length)).decode()
 
 
 @receiver(pre_save, sender=User)

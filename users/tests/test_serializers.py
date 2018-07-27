@@ -28,4 +28,4 @@ class UserSerializerTestCase(TestCase):
 
         self.assertEqual(data['username'], self.user_attrs['username'])
         self.assertEqual(data['email'], self.user_attrs['email'])
-        self.assertEqual(data['password'], self.user_attrs['password'])
+        self.assertTrue(data['password'].startswith('pbkdf2_sha256'))

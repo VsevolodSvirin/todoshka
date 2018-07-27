@@ -67,6 +67,5 @@ def get_user_by_jwt(token):
 def get_token_pair(user):
     return {
         'access_token': 'JWT ' + create_jwt(user.id),
-        'refresh_token': 'trololo'
-        # 'refresh_token': user.get_refresh_token()  # FIXME: implementation of refresh token in User model needed
+        'refresh_token': user.get_refresh_token()
     }

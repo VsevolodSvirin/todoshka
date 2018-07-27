@@ -50,12 +50,13 @@ class RefreshView(APIView):
         access_token_payload = get_token_payload(serialized_request.data['access_token'])
         refresh_token = serialized_request.data['refresh_token']
         user = User.objects.filter(id=access_token_payload['user_id']).first()
-        actual_refresh_token = 'trololo'
-        # actual_refresh_token = user.refresh_token  # FIXME: implementation of refresh token in User model needed
+        actual_refresh_token = user.refresh_token
 
         if actual_refresh_token != refresh_token:
             return Response(
                 {'non_field_errors': ['Wrong token pair']},
                 status=status.HTTP_400_BAD_REQUEST
             )
+
+        user.update_refresh_token()
         return Response({'user': UserSerializer(user).data, **get_token_pair(user)})
