@@ -7,7 +7,6 @@ from rest_framework.test import APIClient
 from todolists.models import TodoList
 from todolists.serializers import TodoListSerializer
 
-
 User = get_user_model()
 
 
