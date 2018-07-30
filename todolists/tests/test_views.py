@@ -1,29 +1,35 @@
+from django.contrib.auth import get_user_model
 from django.test import TestCase
 from django.urls import reverse
 from rest_framework import status
 from rest_framework.test import APIClient
 
-from api.models import TodoList
-from api.serializers import TodoListSerializer
-from users.models import User
+from todolists.models import TodoList
+from todolists.serializers import TodoListSerializer
+
+
+User = get_user_model()
 
 
 class TodoListViewTestCase(TestCase):
     def setUp(self):
         self.client = APIClient()
-        self.user = User.objects.create(username='Cool Guy',
-                                        email='cool_guy@smedilink.com',
-                                        password='123')
+        self.user = User.objects.create_user(username='Cool Guy',
+                                             email='cool_guy@smedilink.com',
+                                             password='123')
         self.client.force_authenticate(user=self.user)
-        TodoList.objects.create(name='This is a List',
-                                author=self.user)
+        self.todolist = TodoList.objects.create(name='This is a List',
+                                                author=self.user)
+
+    def tearDown(self):
+        self.user.delete()
+        self.todolist.delete()
 
     def test_authorization_enforced(self):
         self.client.force_authenticate(None)
-        todo = TodoList.objects.get()
         response = self.client.get(reverse('todolist-detail',
-                                           kwargs={'pk': todo.id}))
-        self.assertEqual(response.status_code, status.HTTP_403_FORBIDDEN)
+                                           kwargs={'pk': self.todolist.id}))
+        self.assertTrue(status.is_client_error(response.status_code))
 
     def test_create_todo_list(self):
         data = {'name': 'My First ToDo List',
@@ -34,18 +40,17 @@ class TodoListViewTestCase(TestCase):
             format='json'
         )
 
-        self.assertEqual(response.status_code, status.HTTP_201_CREATED)
+        self.assertTrue(status.is_success(response.status_code))
 
     def test_get_todo_list(self):
-        todo = TodoList.objects.get()
         response = self.client.get(
             reverse('todolist-detail',
-                    kwargs={'pk': todo.id}),
+                    kwargs={'pk': self.todolist.id}),
             format='json'
         )
 
-        self.assertEqual(response.status_code, status.HTTP_200_OK)
-        self.assertEqual(response.data, TodoListSerializer().to_representation(todo))
+        self.assertTrue(status.is_success(response.status_code))
+        self.assertEqual(response.data, TodoListSerializer().to_representation(self.todolist))
 
     def test_update_todo_list(self):
         todo = TodoList.objects.get()
@@ -56,14 +61,13 @@ class TodoListViewTestCase(TestCase):
             format='json'
         )
 
-        self.assertEqual(response.status_code, status.HTTP_200_OK)
+        self.assertTrue(status.is_success(response.status_code))
 
     def test_delete_todo_list(self):
-        todo = TodoList.objects.get()
         response = self.client.delete(
-            reverse('todolist-detail', kwargs={'pk': todo.id}),
+            reverse('todolist-detail', kwargs={'pk': self.todolist.id}),
             format='json',
             follow=True
         )
 
-        self.assertEqual(response.status_code, status.HTTP_204_NO_CONTENT)
+        self.assertTrue(status.is_success(response.status_code))

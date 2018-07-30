@@ -1,10 +1,13 @@
 from unittest.mock import Mock
 
+from django.contrib.auth import get_user_model
 from django.test import TestCase
 
-from api.models import TodoList
-from api.permissions import IsAuthorOrAdmin
-from users.models import User
+from todolists.models import TodoList
+from todolists.permissions import IsAuthorOrAdmin
+
+
+User = get_user_model()
 
 
 class PermissionsTestCase(TestCase):
@@ -24,6 +27,12 @@ class PermissionsTestCase(TestCase):
 
         self.user_todo_list = TodoList.objects.create(name='Bobby\'s List',
                                                       author=self.user)
+
+    def tearDown(self):
+        self.user.delete()
+        self.user_2.delete()
+        self.admin.delete()
+        self.user_todo_list.delete()
 
     def test_admin_can_edit_everything(self):
         self.mock_request.user = self.admin

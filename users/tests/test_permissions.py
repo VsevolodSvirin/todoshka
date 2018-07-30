@@ -1,5 +1,6 @@
 from unittest.mock import Mock
 
+from django.contrib.auth.models import AnonymousUser
 from django.test import TestCase
 
 from users.models import User
@@ -18,8 +19,13 @@ class PermissionsTestCase(TestCase):
                                                email='magnificent@jane.com',
                                                password='123')
         self.admin = User.objects.create_superuser(username='Reckless Joe',
-                                                   email='lul@olo.lo',
+                                                   email='reckless@joe.com',
                                                    password='12345678')
+
+    def tearDown(self):
+        self.user.delete()
+        self.user_2.delete()
+        self.admin.delete()
 
     def test_admin_can_edit_everybody(self):
         self.mock_request.user = self.admin
@@ -36,5 +42,11 @@ class PermissionsTestCase(TestCase):
     def test_user_cannot_edit_others(self):
         self.mock_request.user = self.user_2
         response = self.permission.has_object_permission(self.mock_request, None, self.user)
+
+        self.assertFalse(response)
+
+    def test_cannot_do_anything_without_authentication(self):
+        self.mock_request.user = AnonymousUser()
+        response = self.permission.has_permission(self.mock_request, None)
 
         self.assertFalse(response)

@@ -12,13 +12,16 @@ class UserSerializerTestCase(TestCase):
             'password': '123'
         }
 
-        self.user_obj = User.objects.create(**self.user_attrs)
+        self.user_obj = User.objects.create_user(**self.user_attrs)
         self.user_serialized = UserSerializer(instance=self.user_obj)
+
+    def tearDown(self):
+        self.user_obj.delete()
 
     def test_contains_expected_fields(self):
         data = self.user_serialized.data
 
-        self.assertCountEqual(data.keys(), {'username', 'email'})
+        self.assertEqual(set(data.keys()), {'id', 'username', 'email'})
 
     def test_fields_content(self):
         data = self.user_serialized.data

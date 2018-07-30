@@ -1,8 +1,11 @@
+from django.contrib.auth import get_user_model
 from django.test import TestCase
 
-from api.models import TodoList
-from api.serializers import TodoListSerializer
-from users.models import User
+from todolists.models import TodoList
+from todolists.serializers import TodoListSerializer
+
+
+User = get_user_model()
 
 
 class TodoListSerializerTestCase(TestCase):
@@ -18,10 +21,14 @@ class TodoListSerializerTestCase(TestCase):
         self.todo_obj = TodoList.objects.create(**self.todo_attrs)
         self.todo_serialized = TodoListSerializer(instance=self.todo_obj)
 
+    def tearDown(self):
+        self.user.delete()
+        self.todo_obj.delete()
+
     def test_contains_expected_fields(self):
         data = self.todo_serialized.data
 
-        self.assertCountEqual(data.keys(), {'name', 'author', 'date_created', 'date_modified'})
+        self.assertEqual(set(data.keys()), {'id', 'name', 'author', 'date_created', 'date_modified'})
 
     def test_fields_content(self):
         data = self.todo_serialized.data

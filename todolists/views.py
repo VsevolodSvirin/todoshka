@@ -1,9 +1,9 @@
 from rest_framework import permissions
 from rest_framework.viewsets import ModelViewSet
 
-from api.models import TodoList
-from api.permissions import IsAuthorOrAdmin
-from api.serializers import TodoListSerializer
+from todolists.models import TodoList
+from todolists.permissions import IsAuthorOrAdmin
+from todolists.serializers import TodoListSerializer
 
 
 class TodoListViewSet(ModelViewSet):
