@@ -4,7 +4,6 @@ from django.test import TestCase
 from todolists.models import TodoList
 from todolists.serializers import TodoListSerializer
 
-
 User = get_user_model()
 
 
@@ -28,13 +27,14 @@ class TodoListSerializerTestCase(TestCase):
     def test_contains_expected_fields(self):
         data = self.todo_serialized.data
 
-        self.assertEqual(set(data.keys()), {'id', 'name', 'author', 'date_created', 'date_modified'})
+        self.assertEqual(set(data.keys()), {'id', 'name', 'author', 'category', 'date_created', 'date_modified'})
 
     def test_fields_content(self):
         data = self.todo_serialized.data
 
         self.assertEqual(data['name'], self.todo_attrs['name'])
         self.assertEqual(data['author'], self.todo_attrs['author'].id)
+        self.assertEqual(data['category'], None)
 
     def test_dates(self):
         data = self.todo_serialized.data
