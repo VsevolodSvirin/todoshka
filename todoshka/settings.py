@@ -41,8 +41,9 @@ INSTALLED_APPS = [
 
     'rest_framework',
 
-    'todolists',
     'users',
+    'todolists',
+    'categories',
 ]
 
 MIDDLEWARE = [
