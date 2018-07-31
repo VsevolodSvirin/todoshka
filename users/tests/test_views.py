@@ -25,7 +25,6 @@ class UserTestCase(TestCase):
         self.assertTrue(status.is_client_error(response.status_code))
 
     def test_get_list_of_users(self):
-        self.client.force_authenticate(None)
         response = self.client.get(reverse('user-list'))
         self.assertTrue((status.is_success(response.status_code)))
 
@@ -41,7 +40,7 @@ class UserTestCase(TestCase):
             format='json'
         )
 
-        self.assertTrue(status.is_success(response.status_code))
+        self.assertTrue(status.is_client_error(response.status_code))
 
     def test_get_user(self):
         response = self.client.get(
