@@ -4,8 +4,8 @@ from django.contrib.auth import get_user_model
 from django.test import TestCase
 
 from categories.models import Category
+from categories.permissions import IsAuthorOrAdmin
 from categories.views import CategoryViewSet
-from todolists.permissions import IsAuthorOrAdmin
 
 User = get_user_model()
 
@@ -13,7 +13,7 @@ User = get_user_model()
 class PermissionsTestCase(TestCase):
     def setUp(self):
         self.mock_request = Mock()
-        self.view = CategoryViewSet()
+        self.view = CategoryViewSet(action='update')
 
         self.permission = IsAuthorOrAdmin()
 
@@ -42,13 +42,13 @@ class PermissionsTestCase(TestCase):
 
         self.assertTrue(response)
 
-    def test_user_can_edit_his_list(self):
+    def test_user_can_edit_his_category(self):
         self.mock_request.user = self.user
         response = self.permission.has_object_permission(self.mock_request, self.view, self.user_category)
 
         self.assertTrue(response)
 
-    def test_user_cannot_edit_list_of_another_user(self):
+    def test_user_cannot_edit_category_of_another_user(self):
         self.mock_request.user = self.user_2
         response = self.permission.has_object_permission(self.mock_request, self.view, self.user_category)
 

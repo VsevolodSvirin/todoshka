@@ -6,5 +6,5 @@ from categories.models import Category
 class CategorySerializer(ModelSerializer):
     class Meta:
         model = Category
-        fields = ('id', 'name', 'common', 'user', 'private')
+        fields = ('id', 'name', 'common', 'user')
         read_only_fields = ('id', 'common')

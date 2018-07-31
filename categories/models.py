@@ -6,4 +6,3 @@ class Category(models.Model):
     common = models.BooleanField(default=False)
     user = models.ForeignKey('users.User', related_name='categories', null=True, blank=True,
                              on_delete=models.CASCADE)
-    private = models.BooleanField(default=False)

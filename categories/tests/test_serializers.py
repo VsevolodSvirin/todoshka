@@ -27,7 +27,7 @@ class CategorySerializerTestCase(TestCase):
     def test_contains_expected_fields(self):
         data = self.category_serialized.data
 
-        self.assertEqual(set(data.keys()), {'id', 'name', 'common', 'user', 'private'})
+        self.assertEqual(set(data.keys()), {'id', 'name', 'common', 'user'})
 
     def test_fields_content(self):
         data = self.category_serialized.data
@@ -35,4 +35,3 @@ class CategorySerializerTestCase(TestCase):
         self.assertEqual(data['name'], self.category_attrs['name'])
         self.assertEqual(data['common'], Category._meta.get_field('common').default)
         self.assertEqual(data['user'], self.category_attrs['user'].id)
-        self.assertEqual(data['private'], Category._meta.get_field('private').default)
