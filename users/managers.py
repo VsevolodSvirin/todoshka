@@ -15,7 +15,7 @@ class UserManager(DefaultUserManager):
         user.set_password(password)
         user.save(using=self._db)
 
-        for category in Category.objects.filter():
+        for category in Category.objects.filter(common=True):
             user.categories.add(category)
         user.save(using=self._db)
 

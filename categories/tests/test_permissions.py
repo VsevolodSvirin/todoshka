@@ -27,8 +27,8 @@ class PermissionsTestCase(TestCase):
                                                    email='reckless@joe.com',
                                                    password='12345678')
 
-        self.user_category = Category.objects.create(name='Bobby\'s Category',
-                                                     user=self.user)
+        self.user_category = Category.objects.create(name='Bobby\'s Category')
+        self.user.categories.add(self.user_category)
 
     def tearDown(self):
         self.user.delete()
@@ -47,6 +47,13 @@ class PermissionsTestCase(TestCase):
         response = self.permission.has_object_permission(self.mock_request, self.view, self.user_category)
 
         self.assertTrue(response)
+
+    def test_user_cannot_edit_common_category(self):
+        self.mock_request.user = self.user
+        common_category = self.user.categories.filter(common=True).first()
+        response = self.permission.has_object_permission(self.mock_request, self.view, common_category)
+
+        self.assertFalse(response)
 
     def test_user_cannot_edit_category_of_another_user(self):
         self.mock_request.user = self.user_2

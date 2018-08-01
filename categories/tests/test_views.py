@@ -19,8 +19,8 @@ class CategoryViewTestCase(TestCase):
         self.client.force_authenticate(user=self.user)
         self.common_category = Category.objects.create(name='This is a Common Category',
                                                        common=True)
-        self.personal_category = Category.objects.create(name='This is a Private Category',
-                                                         user=self.user)
+        self.personal_category = Category.objects.create(name='This is a Personal Category')
+        self.user.categories.add(self.personal_category)
 
     def tearDown(self):
         self.user.delete()
@@ -91,6 +91,8 @@ class CategoryViewTestCase(TestCase):
         )
 
         self.assertTrue(status.is_client_error(response.status_code))
+
+        other_user.delete()
 
     def test_update_category(self):
         new_data = {'name': 'This is a Category'}
