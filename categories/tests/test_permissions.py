@@ -4,7 +4,7 @@ from django.contrib.auth import get_user_model
 from django.test import TestCase
 
 from categories.models import Category
-from categories.permissions import IsAuthorOrAdmin
+from categories.permissions import CategoryPermissions
 from categories.views import CategoryViewSet
 
 User = get_user_model()
@@ -15,7 +15,7 @@ class PermissionsTestCase(TestCase):
         self.mock_request = Mock()
         self.view = CategoryViewSet(action='update')
 
-        self.permission = IsAuthorOrAdmin()
+        self.permission = CategoryPermissions()
 
         self.user = User.objects.create_user(username='Awesome Bob',
                                              email='awesome@bob.com',
