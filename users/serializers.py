@@ -8,3 +8,6 @@ class UserSerializer(ModelSerializer):
         model = User
         fields = ('id', 'username', 'email')
         read_only_fields = ('id',)
+
+    def create(self, validated_data):
+        raise NotImplementedError
