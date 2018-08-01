@@ -9,6 +9,9 @@ from django.db.models.signals import pre_save
 from django.dispatch import receiver
 from django.utils.translation import gettext_lazy as _
 
+from categories.models import Category
+from users.managers import UserManager
+
 
 class UsernameValidator(UnicodeUsernameValidator):
     regex = r'^[\w\.@+\- ]+$'
@@ -19,6 +22,7 @@ class UsernameValidator(UnicodeUsernameValidator):
 
 
 class User(AbstractUser):
+    objects = UserManager()
     username_validator = UsernameValidator()
 
     username = models.CharField(
@@ -33,6 +37,9 @@ class User(AbstractUser):
     )
 
     email = models.EmailField(_('email address'), null=False, blank=False, unique=True)
+
+    categories = models.ManyToManyField(Category)
+
     refresh_token = models.CharField(max_length=255, null=True, blank=True)
     refresh_token_issued_at = models.IntegerField(default=0)
 

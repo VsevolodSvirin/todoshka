@@ -60,3 +60,12 @@ class UserTestCase(TestCase):
         self.assertNotEqual(token, user.update_refresh_token())
         self.assertNotEqual(token_time, user.refresh_token_issued_at)
         user.delete()
+
+    def test_default_categories(self):
+        user = User.objects.create_user(username='Cool Guy',
+                                        email='cool_guy@smedialink.com',
+                                        password='123')
+        categories = []
+        for category in list(user.categories.all()):
+            categories.append(category.name)
+        self.assertEqual(categories, ['Home', 'Work', 'Other'])
