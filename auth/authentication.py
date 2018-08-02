@@ -9,7 +9,6 @@ from todoshka.settings import SECRET_KEY, JWT_LIFE_TIME
 
 
 class JWTAuthentication(BaseAuthentication):
-    # TODO Unit test dis shiet
     def authenticate(self, request):
         if 'HTTP_AUTHORIZATION' not in request.META:
             return None
@@ -19,7 +18,7 @@ class JWTAuthentication(BaseAuthentication):
         user = get_user_by_jwt(access_token)
 
         if user is not None and user.is_active:
-            return user, None
+            return user
         return None
 
     def authenticate_header(self, request):
