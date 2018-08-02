@@ -5,19 +5,10 @@ from categories.models import Category
 
 class UserManager(DefaultUserManager):
     def _create_user(self, username, email, password, **extra_fields):
-        if not username:
-            raise ValueError('The given username must be set')
-
-        email = self.normalize_email(email)
-        username = self.model.normalize_username(username)
-        user = self.model(username=username, email=email, **extra_fields)
-
-        user.set_password(password)
-        user.save(using=self._db)
+        user = super()._create_user(username, email, password, **extra_fields)
 
         for category in Category.objects.filter(common=True):
             user.categories.add(category)
-        user.save(using=self._db)
 
         return user
 
