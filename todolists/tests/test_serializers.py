@@ -1,5 +1,8 @@
+import datetime
+
 from django.contrib.auth import get_user_model
 from django.test import TestCase
+from pytz import UTC
 
 from todolists.models import TodoList
 from todolists.serializers import TodoListSerializer
@@ -18,7 +21,8 @@ class TodoListSerializerTestCase(TestCase):
         self.todo_attrs = {
             'name': 'My ToDo List',
             'author': self.user,
-            'assignee': self.assignee
+            'assignee': self.assignee,
+            'deadline': datetime.datetime(2020, 1, 1, 0, 0, 0, 0, tzinfo=UTC)
         }
 
         self.todo_obj = TodoList.objects.create(**self.todo_attrs)
@@ -32,7 +36,7 @@ class TodoListSerializerTestCase(TestCase):
     def test_contains_expected_fields(self):
         data = self.todo_serialized.data
 
-        self.assertEqual(set(data.keys()), {'id', 'name', 'author', 'assignee', 'category',
+        self.assertEqual(set(data.keys()), {'id', 'name', 'author', 'assignee', 'category', 'deadline',
                                             'date_created', 'date_modified'})
 
     def test_fields_content(self):
@@ -46,4 +50,5 @@ class TodoListSerializerTestCase(TestCase):
     def test_dates(self):
         data = self.todo_serialized.data
 
+        self.assertLess(data['date_created'], data['deadline'])
         self.assertLess(data['date_created'], data['date_modified'])
