@@ -53,10 +53,9 @@ class UserTestCase(TestCase):
         self.assertEqual(response.data, UserSerializer().to_representation(self.user))
 
     def test_update_user(self):
-        user = User.objects.get()
         new_data = {'email': 'not_so_cool_guy@smedialink.com'}
         response = self.client.patch(
-            reverse('user-detail', kwargs={'pk': user.id}),
+            reverse('user-detail', kwargs={'pk': self.user.id}),
             new_data,
             format='json'
         )

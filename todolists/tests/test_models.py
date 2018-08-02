@@ -3,7 +3,6 @@ from django.test import TestCase
 
 from todolists.models import TodoList
 
-
 User = get_user_model()
 
 

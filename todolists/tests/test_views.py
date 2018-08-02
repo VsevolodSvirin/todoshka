@@ -41,6 +41,8 @@ class TodoListViewTestCase(TestCase):
 
         self.assertTrue(status.is_success(response.status_code))
 
+        TodoList.objects.filter(name='My First ToDo List').first().delete()
+
     def test_get_todo_list(self):
         response = self.client.get(
             reverse('todolist-detail',
@@ -52,10 +54,9 @@ class TodoListViewTestCase(TestCase):
         self.assertEqual(response.data, TodoListSerializer().to_representation(self.todolist))
 
     def test_update_todo_list(self):
-        todo = TodoList.objects.get()
         new_data = {'name': 'Supa List'}
         response = self.client.patch(
-            reverse('todolist-detail', kwargs={'pk': todo.id}),
+            reverse('todolist-detail', kwargs={'pk': self.todolist.id}),
             new_data,
             format='json'
         )
