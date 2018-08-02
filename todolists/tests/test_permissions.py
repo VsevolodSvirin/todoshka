@@ -4,7 +4,7 @@ from django.contrib.auth import get_user_model
 from django.test import TestCase
 
 from todolists.models import TodoList
-from todolists.permissions import IsAuthorOrAdmin
+from todolists.permissions import TodoListsPermissions
 from todolists.views import TodoListViewSet
 
 User = get_user_model()
@@ -15,7 +15,7 @@ class PermissionsTestCase(TestCase):
         self.mock_request = Mock()
         self.view = TodoListViewSet()
 
-        self.permission = IsAuthorOrAdmin()
+        self.permission = TodoListsPermissions()
 
         self.user = User.objects.create_user(username='Awesome Bob',
                                              email='awesome@bob.com',
@@ -51,5 +51,20 @@ class PermissionsTestCase(TestCase):
     def test_user_cannot_edit_list_of_another_user(self):
         self.mock_request.user = self.user_2
         response = self.permission.has_object_permission(self.mock_request, self.view, self.user_todo_list)
+
+        self.assertFalse(response)
+
+    def test_user_can_get_assigned_list(self):
+        self.mock_request.user = self.user_2
+        self.mock_request.method = 'GET'
+        self.user_todo_list.assignee = self.user_2
+        response = self.permission.has_object_permission(self.mock_request, None, self.user_todo_list)
+
+        self.assertTrue(response)
+
+    def test_user_can_not_edit_assigned_list(self):
+        self.mock_request.user = self.user_2
+        self.mock_request.method = 'PATCH'
+        response = self.permission.has_object_permission(self.mock_request, None, self.user_todo_list)
 
         self.assertFalse(response)
