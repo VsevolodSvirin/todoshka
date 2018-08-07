@@ -1,5 +1,11 @@
+import datetime
+from unittest.mock import patch
+
 from django.contrib.auth import get_user_model
 from django.test import TestCase
+from django.utils import timezone
+from pytz import UTC
+from rest_framework.exceptions import ValidationError
 
 from todolists.models import TodoList
 from todolists.serializers import TodoListSerializer
@@ -18,7 +24,8 @@ class TodoListSerializerTestCase(TestCase):
         self.todo_attrs = {
             'name': 'My ToDo List',
             'author': self.user,
-            'assignee': self.assignee
+            'assignee': self.assignee,
+            'deadline': datetime.datetime(2020, 1, 1, 0, 0, 0, 0, tzinfo=UTC)
         }
 
         self.todo_obj = TodoList.objects.create(**self.todo_attrs)
@@ -32,7 +39,7 @@ class TodoListSerializerTestCase(TestCase):
     def test_contains_expected_fields(self):
         data = self.todo_serialized.data
 
-        self.assertEqual(set(data.keys()), {'id', 'name', 'author', 'assignee', 'category',
+        self.assertEqual(set(data.keys()), {'id', 'name', 'author', 'assignee', 'category', 'deadline',
                                             'date_created', 'date_modified'})
 
     def test_fields_content(self):
@@ -46,4 +53,32 @@ class TodoListSerializerTestCase(TestCase):
     def test_dates(self):
         data = self.todo_serialized.data
 
+        self.assertLess(data['date_created'], data['deadline'])
         self.assertLess(data['date_created'], data['date_modified'])
+
+    def test_deadline_after_now_fail(self):
+        todo_attrs = {
+            'name': 'My Second ToDo List',
+            'author': self.user.id,
+            'assignee': self.assignee.id,
+            'deadline': timezone.now() - datetime.timedelta(hours=1)
+        }
+        with self.assertRaises(ValidationError):
+            TodoListSerializer(data=todo_attrs).is_valid(raise_exception=True)
+
+    @patch('todolists.serializers.deliver_email_on_create')
+    @patch('todolists.serializers.deliver_email_on_update')
+    def test_email_delivery(self, deliver_email_on_update, deliver_email_on_create):
+        todo_attrs = {
+            'name': 'My Second ToDo List',
+            'author': self.user,
+            'assignee': self.assignee,
+            'deadline': datetime.datetime(2020, 1, 1, 0, 0, 0, 0, tzinfo=UTC)
+        }
+
+        todo_obj = TodoListSerializer().create(todo_attrs)
+        deliver_email_on_create.assert_called()
+
+        TodoListSerializer().update(todo_obj,
+                                    {'deadline': datetime.datetime(2020, 1, 1, 1, 1, 1, 1, tzinfo=UTC)})
+        deliver_email_on_update.assert_called()
