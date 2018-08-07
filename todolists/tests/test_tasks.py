@@ -1,11 +1,12 @@
-from datetime import timedelta
+import datetime
 
 from django.contrib.auth import get_user_model
 from django.core import mail
 from django.test import TestCase
 from django.utils import timezone
+from pytz import UTC
 
-from todolists.models import TodoList
+from todolists.serializers import TodoListSerializer
 from todolists.tasks import email_notify
 from todoshka.celery import app as celery_app
 
@@ -21,12 +22,16 @@ class SendNotificationsTestCase(TestCase):
                                           email='another_cool_guy@smedialink.com',
                                           password='123')
 
-        self.todo = TodoList.objects.create(name='This is a List',
-                                            author=self.user,
-                                            assignee=self.user_2,
-                                            deadline=timezone.now() + timedelta(hours=1, minutes=1))
+        todo_attrs = {
+            'name': 'This is a List',
+            'author': self.user,
+            'assignee': self.user_2,
+            'deadline': timezone.now() + datetime.timedelta(hours=1, minutes=1)
+        }
 
         celery_app.conf.task_always_eager = True
+
+        self.todo = TodoListSerializer().create(validated_data=todo_attrs)
 
     def tearDown(self):
         self.user.delete()
@@ -45,7 +50,9 @@ class SendNotificationsTestCase(TestCase):
     def test_deadline_changed_notification(self):
         old_outbox = len(mail.outbox)
 
-        self.todo.deadline = timezone.now() + timedelta(hours=3)
+        self.todo = TodoListSerializer().update(
+            self.todo,
+            validated_data={'deadline': datetime.datetime(2020, 1, 1, 1, 1, 1, 1, tzinfo=UTC)})
 
         self.assertEqual(len(mail.outbox), old_outbox + 1)
         self.assertEqual(mail.outbox[-1].subject, 'Deadline for This is a List')
@@ -58,7 +65,7 @@ class SendNotificationsTestCase(TestCase):
     def test_notification(self):
         mail.outbox.clear()
 
-        email_notify()
+        email_notify.delay()
 
         self.assertEqual(len(mail.outbox), 1)
         self.assertEqual(mail.outbox[0].subject, 'Notification about This is a List deadline')
