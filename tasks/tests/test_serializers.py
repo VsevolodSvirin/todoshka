@@ -7,13 +7,13 @@ from django.utils import timezone
 from pytz import UTC
 from rest_framework.exceptions import ValidationError
 
-from todolists.models import TodoList
-from todolists.serializers import TodoListSerializer
+from tasks.models import Task
+from tasks.serializers import TaskSerializer
 
 User = get_user_model()
 
 
-class TodoListSerializerTestCase(TestCase):
+class TaskSerializerTestCase(TestCase):
     def setUp(self):
         self.user = User.objects.create_user(username='Cool Guy',
                                              email='cool_guy@smedialink.com',
@@ -28,8 +28,8 @@ class TodoListSerializerTestCase(TestCase):
             'deadline': datetime.datetime(2020, 1, 1, 0, 0, 0, 0, tzinfo=UTC)
         }
 
-        self.todo_obj = TodoList.objects.create(**self.todo_attrs)
-        self.todo_serialized = TodoListSerializer(instance=self.todo_obj)
+        self.todo_obj = Task.objects.create(**self.todo_attrs)
+        self.todo_serialized = TaskSerializer(instance=self.todo_obj)
 
     def tearDown(self):
         self.user.delete()
@@ -64,10 +64,10 @@ class TodoListSerializerTestCase(TestCase):
             'deadline': timezone.now() - datetime.timedelta(hours=1)
         }
         with self.assertRaises(ValidationError):
-            TodoListSerializer(data=todo_attrs).is_valid(raise_exception=True)
+            TaskSerializer(data=todo_attrs).is_valid(raise_exception=True)
 
-    @patch('todolists.serializers.deliver_email_on_create')
-    @patch('todolists.serializers.deliver_email_on_update')
+    @patch('tasks.serializers.deliver_email_on_create')
+    @patch('tasks.serializers.deliver_email_on_update')
     def test_email_delivery(self, deliver_email_on_update, deliver_email_on_create):
         todo_attrs = {
             'name': 'My Second ToDo List',
@@ -76,9 +76,9 @@ class TodoListSerializerTestCase(TestCase):
             'deadline': datetime.datetime(2020, 1, 1, 0, 0, 0, 0, tzinfo=UTC)
         }
 
-        todo_obj = TodoListSerializer().create(todo_attrs)
+        todo_obj = TaskSerializer().create(todo_attrs)
         deliver_email_on_create.assert_called()
 
-        TodoListSerializer().update(todo_obj,
-                                    {'deadline': datetime.datetime(2020, 1, 1, 1, 1, 1, 1, tzinfo=UTC)})
+        TaskSerializer().update(todo_obj,
+                                {'deadline': datetime.datetime(2020, 1, 1, 1, 1, 1, 1, tzinfo=UTC)})
         deliver_email_on_update.assert_called()

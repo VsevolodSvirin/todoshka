@@ -1,0 +1,583 @@
+swagger: '2.0'
+info:
+  title: Todoshka
+  description: Documenatation for Todoshka REST API
+  version: 0.1.0
+
+host: localhost
+basePath: /api
+
+tags:
+  - name: auth
+    description: Access Operations
+  - name: categories
+    description: Categories Operations
+  - name: tasks
+    description: Tasks Operations
+  - name: users
+    description: Users Operations
+
+paths:
+
+  # Auth API
+
+  /auth/register/:
+    post:
+      tags:
+        - auth
+      summary: User registration
+      parameters:
+        - in: body
+          name: data
+          schema:
+            type: object
+            properties:
+              username:
+                description: Username
+                type: string
+              email:
+                description: User email
+                type: string
+              password:
+                description: User password
+                type: string
+            required:
+              - username
+              - email
+              - password
+      responses:
+        201:
+          description: Success
+        400:
+          description: Invalid request or parameters
+          schema:
+            $ref: '#/definitions/ErrorMessages'
+
+  /auth/login/:
+    post:
+      tags:
+        - auth
+      summary: User authorization
+      parameters:
+        - in: body
+          name: data
+          schema:
+            type: object
+            properties:
+              username:
+                description: Username
+                type: string
+              password:
+                description: User password
+                type: string
+            required:
+              - username
+              - password
+      responses:
+        200:
+          description: Success
+          schema:
+            type: object
+            properties:
+              access_token:
+                type: string
+                description: This token must be passed to backend in Authorization header
+              refresh_token:
+                type: string
+                description: This token is used to create new access token on its expiration
+              user:
+                $ref: '#/definitions/User'
+        400:
+          description: Invalid request or parameters
+          schema:
+            $ref: '#/definitions/ErrorMessages'
+        401:
+          description: Wrong login or password
+          schema:
+            $ref: '#/definitions/ErrorMessages'
+
+  /auth/refresh/:
+    post:
+      tags:
+        - auth
+      summary: User token refresh
+      parameters:
+        - in: body
+          name: data
+          description: Access token is expired
+          schema:
+            $ref: '#/definitions/Tokens'
+      responses:
+        200:
+          description: Success
+          schema:
+            $ref: '#/definitions/Tokens'
+        400:
+          description: Invalid request or parameters
+          schema:
+            $ref: '#/definitions/ErrorMessages'
+
+  # End of Auth API
+
+  # Categories API
+
+  /categories/:
+    get:
+      tags:
+        - categories
+      summary: List of categories
+      responses:
+        200:
+          description: Success
+          schema:
+            results:
+              type: array
+              items:
+                $ref: '#/definitions/Category'
+        401:
+          description: Unauthorized
+          schema:
+            $ref: '#/definitions/ErrorMessages'
+
+    post:
+      tags:
+        - categories
+      summary: Create category
+      parameters:
+        - name: data
+          in: body
+          schema:
+            type: object
+            required: [
+              name
+            ]
+            properties:
+              name:
+                type: string
+      responses:
+        200:
+          description: Success
+          schema:
+            $ref: '#/definitions/Category'
+        400:
+          description: Invalid request or parameters
+          schema:
+            $ref: '#/definitions/ErrorMessages'
+        401:
+          description: Unauthorized
+          schema:
+            $ref: '#/definitions/ErrorMessages'
+
+
+  /categories/{id}/:
+    get:
+      tags:
+        - categories
+      summary: Get category
+      parameters:
+        - name: id
+          required: true
+          in: path
+          type: integer
+      responses:
+        200:
+          description: Success
+          schema:
+            $ref: '#/definitions/Category'
+        401:
+          description: Unauthorized
+          schema:
+            $ref: '#/definitions/ErrorMessages'
+        404:
+          description: Not Found
+          schema:
+            $ref: '#/definitions/ErrorMessages'
+
+    patch:
+      tags:
+        - categories
+      summary: Edit category
+      parameters:
+        - name: id
+          required: true
+          in: path
+          type: integer
+          schema:
+            type: object
+            properties:
+              name:
+                type: string
+      responses:
+        200:
+          description: Success
+          schema:
+            $ref: '#/definitions/Category'
+        401:
+          description: Unauthorized
+          schema:
+            $ref: '#/definitions/ErrorMessages'
+        403:
+          description: Forbidden
+          schema:
+            $ref: '#/definitions/ErrorMessages'
+        404:
+          description: Not Found
+          schema:
+            $ref: '#/definitions/ErrorMessages'
+
+    delete:
+      tags:
+        - categories
+      summary: Delete category
+      parameters:
+        - name: id
+          required: true
+          in: path
+          type: integer
+      responses:
+        204:
+          description: Success
+          schema:
+            $ref: '#/definitions/Category'
+        401:
+          description: Unauthorized
+          schema:
+            $ref: '#/definitions/ErrorMessages'
+        403:
+          description: Forbidden
+          schema:
+            $ref: '#/definitions/ErrorMessages'
+        404:
+          description: Not Found
+          schema:
+            $ref: '#/definitions/ErrorMessages'
+
+  # End of Categories API
+
+  # Tasks API
+
+  /tasks/:
+    get:
+      tags:
+        - tasks
+      summary: List of tasks
+      responses:
+        200:
+          description: Success
+          schema:
+            results:
+              type: array
+              items:
+                $ref: '#/definitions/Task'
+        401:
+          description: Unauthorized
+          schema:
+            $ref: '#/definitions/ErrorMessages'
+
+    post:
+      tags:
+        - tasks
+      summary: Create task
+      parameters:
+        - name: data
+          in: body
+          schema:
+            type: object
+            required: [
+              name, author
+            ]
+            properties:
+              name:
+                type: string
+              author:
+                type: integer
+              assignee:
+                type: integer
+              category:
+                type: integer
+              deadline:
+                type: date-time
+      responses:
+        200:
+          description: Success
+          schema:
+            $ref: '#/definitions/Task'
+        400:
+          description: Invalid request or parameters
+          schema:
+            $ref: '#/definitions/ErrorMessages'
+        401:
+          description: Unauthorized
+          schema:
+            $ref: '#/definitions/ErrorMessages'
+
+  /tasks/{id}/:
+    get:
+      tags:
+        - tasks
+      summary: Get task
+      parameters:
+        - name: id
+          required: true
+          in: path
+          type: integer
+      responses:
+        200:
+          description: Success
+          schema:
+            $ref: '#/definitions/Task'
+        401:
+          description: Unauthorized
+          schema:
+            $ref: '#/definitions/ErrorMessages'
+        404:
+          description: Not Found
+          schema:
+            $ref: '#/definitions/ErrorMessages'
+
+    patch:
+      tags:
+        - tasks
+      summary: Edit task
+      parameters:
+        - name: id
+          required: true
+          in: path
+          type: integer
+          schema:
+            type: object
+            properties:
+              name:
+                type: string
+              author:
+                type: integer
+              assignee:
+                type: integer
+              category:
+                type: integer
+              deadline:
+                type: date-time
+      responses:
+        200:
+          description: Success
+          schema:
+            $ref: '#/definitions/Task'
+        401:
+          description: Unauthorized
+          schema:
+            $ref: '#/definitions/ErrorMessages'
+        403:
+          description: Forbidden
+          schema:
+            $ref: '#/definitions/ErrorMessages'
+        404:
+          description: Not Found
+          schema:
+            $ref: '#/definitions/ErrorMessages'
+
+    delete:
+      tags:
+        - tasks
+      summary: Delete task
+      parameters:
+        - name: id
+          required: true
+          in: path
+          type: integer
+      responses:
+        204:
+          description: Success
+          schema:
+            $ref: '#/definitions/Task'
+        401:
+          description: Unauthorized
+          schema:
+            $ref: '#/definitions/ErrorMessages'
+        403:
+          description: Forbidden
+          schema:
+            $ref: '#/definitions/ErrorMessages'
+        404:
+          description: Not Found
+          schema:
+            $ref: '#/definitions/ErrorMessages'
+
+  # End of Tasks API
+
+  # Users API
+
+  /users/:
+    get:
+      tags:
+        - users
+      summary: List of users
+      responses:
+        200:
+          description: Success
+          schema:
+            results:
+              type: array
+              items:
+                $ref: '#/definitions/User'
+        401:
+          description: Unauthorized
+          schema:
+            $ref: '#/definitions/ErrorMessages'
+
+  /users/{id}/:
+    get:
+      tags:
+        - users
+      summary: Get user
+      parameters:
+        - name: id
+          required: true
+          in: path
+          type: integer
+      responses:
+        200:
+          description: Success
+          schema:
+            $ref: '#/definitions/User'
+        401:
+          description: Unauthorized
+          schema:
+            $ref: '#/definitions/ErrorMessages'
+        404:
+          description: Not Found
+          schema:
+            $ref: '#/definitions/ErrorMessages'
+
+    patch:
+      tags:
+        - users
+      summary: Edit user
+      parameters:
+        - name: id
+          required: true
+          in: path
+          type: integer
+          schema:
+            type: object
+            properties:
+              username:
+                type: string
+              email:
+                type: string
+              password:
+                type: string
+      responses:
+        200:
+          description: Success
+          schema:
+            $ref: '#/definitions/Task'
+        401:
+          description: Unauthorized
+          schema:
+            $ref: '#/definitions/ErrorMessages'
+        403:
+          description: Forbidden
+          schema:
+            $ref: '#/definitions/ErrorMessages'
+        404:
+          description: Not Found
+          schema:
+            $ref: '#/definitions/ErrorMessages'
+
+    delete:
+      tags:
+        - users
+      summary: Delete user
+      parameters:
+        - name: id
+          required: true
+          in: path
+          type: integer
+      responses:
+        204:
+          description: Success
+          schema:
+            $ref: '#/definitions/Task'
+        401:
+          description: Unauthorized
+          schema:
+            $ref: '#/definitions/ErrorMessages'
+        403:
+          description: Forbidden
+          schema:
+            $ref: '#/definitions/ErrorMessages'
+        404:
+          description: Not Found
+          schema:
+            $ref: '#/definitions/ErrorMessages'
+
+  # End of Users API
+
+definitions:
+  User:
+    type: object
+    properties:
+      id:
+        type: integer
+      username:
+        type: string
+      email:
+        type: string
+      password:
+        type: string
+      is_active:
+        type: boolean
+
+  Category:
+    type: object
+    properties:
+      id:
+        type: integer
+      name:
+        type: string
+      common:
+        type: boolean
+
+  Task:
+    type: object
+    properties:
+      id:
+        type: integer
+      name:
+        type: string
+      author:
+        type: integer
+      assignee:
+        type: integer
+      category:
+        type: integer
+      deadline:
+        type: date-time
+      date_created:
+        type: date-time
+      date_modified:
+        type: date-time
+
+  Tokens:
+    type: object
+    properties:
+      access_token:
+        type: string
+      refresh_token:
+        type: string
+
+  ErrorMessages:
+    type: object
+    properties:
+      non_field_errors:
+        type: array
+        items:
+          type: string
+      field_1:
+        type: array
+        items:
+          type: string
+      field_2:
+        type: array
+        items:
+          type: string

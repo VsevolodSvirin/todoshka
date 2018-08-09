@@ -3,9 +3,9 @@ from unittest.mock import Mock
 from django.contrib.auth import get_user_model
 from django.test import TestCase
 
-from todolists.models import TodoList
-from todolists.permissions import TodoListsPermissions
-from todolists.views import TodoListViewSet
+from tasks.models import Task
+from tasks.permissions import TasksPermissions
+from tasks.views import TaskViewSet
 
 User = get_user_model()
 
@@ -13,9 +13,9 @@ User = get_user_model()
 class PermissionsTestCase(TestCase):
     def setUp(self):
         self.mock_request = Mock()
-        self.view = TodoListViewSet()
+        self.view = TaskViewSet()
 
-        self.permission = TodoListsPermissions()
+        self.permission = TasksPermissions()
 
         self.user = User.objects.create_user(username='Awesome Bob',
                                              email='awesome@bob.com',
@@ -27,8 +27,8 @@ class PermissionsTestCase(TestCase):
                                                    email='reckless@joe.com',
                                                    password='12345678')
 
-        self.user_todo_list = TodoList.objects.create(name='Bobby\'s List',
-                                                      author=self.user)
+        self.user_todo_list = Task.objects.create(name='Bobby\'s List',
+                                                  author=self.user)
 
     def tearDown(self):
         self.user.delete()

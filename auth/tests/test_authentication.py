@@ -28,9 +28,10 @@ class JWTAuthenticationTestCase(TestCase):
         self.assertIsNone(user)
 
         request.META['HTTP_AUTHORIZATION'] = self.tokens['access_token']
-        user = self.auth_service.authenticate(request)
+        user, auth = self.auth_service.authenticate(request)
 
         self.assertEqual(user, get_user_by_jwt(token=self.tokens['access_token']))
+        self.assertEqual(auth, None)
 
         request.META['HTTP_AUTHORIZATION'] = 'Trust me, this is a token!'
         user = self.auth_service.authenticate(request)

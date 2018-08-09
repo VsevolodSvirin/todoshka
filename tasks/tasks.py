@@ -5,8 +5,8 @@ from django.contrib.auth import get_user_model
 from django.core.mail import send_mail
 from django.utils import timezone
 
-from todolists import constants
-from todolists.models import TodoList
+from tasks import constants
+from tasks.models import Task
 from todoshka.celery import app
 from todoshka import settings
 
@@ -59,7 +59,7 @@ def send_notification_email(task):
 @app.task()
 def email_task_assigned(task_id):
     try:
-        task = TodoList.objects.get(pk=task_id)
+        task = Task.objects.get(pk=task_id)
         send_assignment_email(task)
     except Exception as exc:
         logger.error('Task Assignment Email Sending: {}'.format(exc))
@@ -68,7 +68,7 @@ def email_task_assigned(task_id):
 @app.task()
 def email_deadline_changed(task_id):
     try:
-        task = TodoList.objects.get(pk=task_id)
+        task = Task.objects.get(pk=task_id)
         send_deadline_changed_email(task)
     except Exception as exc:
         logger.error('Deadline Changed Email Sending: {}'.format(exc))
@@ -79,7 +79,7 @@ def email_notify(*args):
     deadline_early = timezone.now() + timedelta(hours=1)
     deadline_late = deadline_early + timedelta(minutes=1)
 
-    upcoming_tasks = TodoList.objects.filter(deadline__range=[deadline_early, deadline_late])
+    upcoming_tasks = Task.objects.filter(deadline__range=[deadline_early, deadline_late])
     for task in upcoming_tasks:
         try:
             send_notification_email(task)

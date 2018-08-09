@@ -18,12 +18,12 @@ class JWTAuthentication(BaseAuthentication):
         user = get_user_by_jwt(access_token)
 
         if user is not None and user.is_active:
-            return user
+            return user, None
         return None
 
     def authenticate_header(self, request):
         endpoint = 'refresh' if 'HTTP_AUTHORIZATION' in request.META else 'login'
-        return reverse('auth:{}'. format(endpoint))
+        return reverse('auth:{}'.format(endpoint))
 
 
 def create_jwt(user_id, life_time=JWT_LIFE_TIME, secret_key=SECRET_KEY):
