@@ -6,8 +6,8 @@ from django.test import TestCase
 from django.utils import timezone
 from pytz import UTC
 
-from todolists.serializers import TodoListSerializer
-from todolists.tasks import email_notify
+from tasks.serializers import TaskSerializer
+from tasks.tasks import email_notify
 from todoshka.celery import app as celery_app
 
 User = get_user_model()
@@ -31,7 +31,7 @@ class SendNotificationsTestCase(TestCase):
 
         celery_app.conf.task_always_eager = True
 
-        self.todo = TodoListSerializer().create(validated_data=todo_attrs)
+        self.todo = TaskSerializer().create(validated_data=todo_attrs)
 
     def tearDown(self):
         self.user.delete()
@@ -50,7 +50,7 @@ class SendNotificationsTestCase(TestCase):
     def test_deadline_changed_notification(self):
         old_outbox = len(mail.outbox)
 
-        self.todo = TodoListSerializer().update(
+        self.todo = TaskSerializer().update(
             self.todo,
             validated_data={'deadline': datetime.datetime(2020, 1, 1, 1, 1, 1, 1, tzinfo=UTC)})
 

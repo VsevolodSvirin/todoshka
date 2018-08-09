@@ -1,7 +1,7 @@
 from django.db import models
 
 
-class TodoList(models.Model):
+class Task(models.Model):
     name = models.CharField(max_length=255, blank=False)
     author = models.ForeignKey('users.User', related_name='todolists', on_delete=models.CASCADE)
     assignee = models.ForeignKey('users.User', related_name='assigned_todolists', null=True, blank=True,

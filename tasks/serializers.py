@@ -2,13 +2,13 @@ from django.utils import timezone
 from rest_framework import serializers
 from rest_framework.serializers import ModelSerializer
 
-from todolists.models import TodoList
-from todolists.services import deliver_email_on_update, deliver_email_on_create
+from tasks.models import Task
+from tasks.services import deliver_email_on_update, deliver_email_on_create
 
 
-class TodoListSerializer(ModelSerializer):
+class TaskSerializer(ModelSerializer):
     class Meta:
-        model = TodoList
+        model = Task
         fields = ('id', 'name', 'author', 'assignee', 'category', 'deadline', 'date_created', 'date_modified')
         read_only_fields = ('id', 'date_created', 'date_modified')
 

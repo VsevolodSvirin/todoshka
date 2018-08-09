@@ -5,7 +5,7 @@ from django.contrib.auth import get_user_model
 from django.test import TestCase
 from django.utils import timezone
 
-from todolists.serializers import TodoListSerializer
+from tasks.serializers import TaskSerializer
 
 User = get_user_model()
 
@@ -26,7 +26,7 @@ class EmailServicesTestCase(TestCase):
             'author': self.user,
             'assignee': self.assignee
         }
-        instance = TodoListSerializer().create(validated_data=todo_attrs)
+        instance = TaskSerializer().create(validated_data=todo_attrs)
 
         task_assigned_delay.called_with(instance, todo_attrs)
 
@@ -38,16 +38,16 @@ class EmailServicesTestCase(TestCase):
             'author': self.user,
             'assignee': self.assignee
         }
-        instance = TodoListSerializer().create(validated_data=todo_attrs)
+        instance = TaskSerializer().create(validated_data=todo_attrs)
 
         new_assignee = User.objects.create(username='Awesome Bob',
                                            email='awesome@bob.com',
                                            password='123')
-        instance = TodoListSerializer().update(instance, validated_data={'assignee': new_assignee})
+        instance = TaskSerializer().update(instance, validated_data={'assignee': new_assignee})
 
         task_assigned_delay.called_with(instance, {'assignee': new_assignee})
 
         time = {'deadline': timezone.now() + timedelta(hours=1)}
-        instance = TodoListSerializer().update(instance, time)
+        instance = TaskSerializer().update(instance, time)
 
         deadline_changed_delay.called_with(instance, {'deadline': time})
