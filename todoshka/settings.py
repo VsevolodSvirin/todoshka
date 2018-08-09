@@ -44,6 +44,7 @@ INSTALLED_APPS = [
     'users',
     'tasks',
     'categories',
+    "push_notifications"
 ]
 
 MIDDLEWARE = [
@@ -99,6 +100,18 @@ DEFAULT_FROM_EMAIL = 'its@me.mario'
 CELERY_ACCEPT_CONTENT = ['json']
 CELERY_TASK_SERIALIZER = 'json'
 CELERY_RESULT_SERIALIZER = 'json'
+
+# Push notifications
+PUSH_NOTIFICATIONS_SETTINGS = {
+    "FCM_API_KEY": "[your api key]",
+    "GCM_API_KEY": "[your api key]",
+    "APNS_CERTIFICATE": "/path/to/your/certificate.pem",
+    "APNS_TOPIC": "com.example.push_test",
+    "WNS_PACKAGE_SECURITY_ID": "[your package security id, e.g: 'ms-app://e-3-4-6234...']",
+    "WNS_SECRET_KEY": "[your app secret key, e.g.: 'KDiejnLKDUWodsjmewuSZkk']",
+    "WP_PRIVATE_KEY": "/path/to/your/private.pem",
+    "WP_CLAIMS": {'sub': "mailto: development@example.com"}
+}
 
 # Internationalization
 # https://docs.djangoproject.com/en/2.0/topics/i18n/
