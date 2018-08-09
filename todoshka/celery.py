@@ -15,7 +15,7 @@ app.autodiscover_tasks(lambda: settings.INSTALLED_APPS)
 
 app.conf.beat_schedule = {
     'send-notifications': {
-        'task': 'todolists.tasks.notify',
+        'task': 'tasks.tasks.notify',
         'schedule': timedelta(minutes=1),
     },
 }

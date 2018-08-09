@@ -12,8 +12,8 @@ tags:
     description: Access Operations
   - name: categories
     description: Categories Operations
-  - name: todolists
-    description: TodoLists Operations
+  - name: tasks
+    description: Tasks Operations
   - name: users
     description: Users Operations
 
@@ -46,9 +46,9 @@ paths:
               - email
               - password
       responses:
-        '201':
+        201:
           description: Success
-        '400':
+        400:
           description: Invalid request or parameters
           schema:
             $ref: '#/definitions/ErrorMessages'
@@ -74,7 +74,7 @@ paths:
               - username
               - password
       responses:
-        '200':
+        200:
           description: Success
           schema:
             type: object
@@ -87,11 +87,11 @@ paths:
                 description: This token is used to create new access token on its expiration
               user:
                 $ref: '#/definitions/User'
-        '400':
+        400:
           description: Invalid request or parameters
           schema:
             $ref: '#/definitions/ErrorMessages'
-        '401':
+        401:
           description: Wrong login or password
           schema:
             $ref: '#/definitions/ErrorMessages'
@@ -104,15 +104,15 @@ paths:
       parameters:
         - in: body
           name: data
-          description: Access token can expire
+          description: Access token is expired
           schema:
             $ref: '#/definitions/Tokens'
       responses:
-        '200':
+        200:
           description: Success
           schema:
             $ref: '#/definitions/Tokens'
-        '400':
+        400:
           description: Invalid request or parameters
           schema:
             $ref: '#/definitions/ErrorMessages'
@@ -120,6 +120,7 @@ paths:
   # End of Auth API
 
   # Categories API
+
   /categories/:
     get:
       tags:
@@ -149,36 +150,36 @@ paths:
 
   # End of Categories API
 
-  # TodoLists API
+  # Tasks API
 
-  /todolists/:
+  /tasks/:
     get:
       tags:
-        -todolists
+        -tasks
       summary: List of tasks
 
     post:
       tags:
-        -todolists
+        -tasks
       summary: Create task
 
-  /todolists/{id}/:
+  /tasks/{id}/:
     get:
       tags:
-        -todolists
+        -tasks
       summary: Get task
 
     patch:
       tags:
-        -todolists
+        -tasks
       summary: Edit task
 
     delete:
       tags:
-        -todolists
+        -tasks
       summary: Delete task
 
-  # End of TodoLists API
+  # End of Tasks API
 
   # Users API
 

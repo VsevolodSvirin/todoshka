@@ -1,4 +1,4 @@
-from todolists.tasks import email_task_assigned, email_deadline_changed
+from tasks.tasks import email_task_assigned, email_deadline_changed
 
 
 def deliver_email_on_create(instance, validated_data):
