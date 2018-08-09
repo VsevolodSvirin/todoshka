@@ -19,7 +19,7 @@ class EmailServicesTestCase(TestCase):
                                             email='another_cool_guy@smedialink.com',
                                             password='123')
 
-    @patch('todolists.services.email_task_assigned.delay')
+    @patch('tasks.services.email_task_assigned.delay')
     def test_email_delivery_service_on_create(self, task_assigned_delay):
         todo_attrs = {
             'name': 'My ToDo List',
@@ -30,8 +30,8 @@ class EmailServicesTestCase(TestCase):
 
         task_assigned_delay.called_with(instance, todo_attrs)
 
-    @patch('todolists.services.email_task_assigned.delay')
-    @patch('todolists.services.email_deadline_changed.delay')
+    @patch('tasks.services.email_task_assigned.delay')
+    @patch('tasks.services.email_deadline_changed.delay')
     def test_email_delivery_service_on_update(self, deadline_changed_delay, task_assigned_delay):
         todo_attrs = {
             'name': 'My ToDo List',

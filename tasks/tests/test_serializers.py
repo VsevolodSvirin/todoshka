@@ -66,8 +66,8 @@ class TaskSerializerTestCase(TestCase):
         with self.assertRaises(ValidationError):
             TaskSerializer(data=todo_attrs).is_valid(raise_exception=True)
 
-    @patch('todolists.serializers.deliver_email_on_create')
-    @patch('todolists.serializers.deliver_email_on_update')
+    @patch('tasks.serializers.deliver_email_on_create')
+    @patch('tasks.serializers.deliver_email_on_update')
     def test_email_delivery(self, deliver_email_on_update, deliver_email_on_create):
         todo_attrs = {
             'name': 'My Second ToDo List',
