@@ -124,29 +124,133 @@ paths:
   /categories/:
     get:
       tags:
-        -categories
+        - categories
       summary: List of categories
+      responses:
+        200:
+          description: Success
+          schema:
+            results:
+              type: array
+              items:
+                $ref: '#/definitions/Category'
+        401:
+          description: Unauthorized
+          schema:
+            $ref: '#/definitions/ErrorMessages'
 
     post:
       tags:
-        -categories
+        - categories
       summary: Create category
+      parameters:
+        - name: data
+          in: body
+          schema:
+            type: object
+            required: [
+              name
+            ]
+            properties:
+              name:
+                type: string
+      responses:
+        200:
+          description: Success
+          schema:
+            $ref: '#/definitions/Category'
+        400:
+          description: Invalid request or parameters
+          schema:
+            $ref: '#/definitions/ErrorMessages'
+        401:
+          description: Unauthorized
+          schema:
+            $ref: '#/definitions/ErrorMessages'
+
 
   /categories/{id}/:
     get:
       tags:
-        -categories
+        - categories
       summary: Get category
+      parameters:
+        - name: id
+          required: true
+          in: path
+          type: integer
+      responses:
+        200:
+          description: Success
+          schema:
+            $ref: '#/definitions/Category'
+        401:
+          description: Unauthorized
+          schema:
+            $ref: '#/definitions/ErrorMessages'
+        404:
+          description: Not Found
+          schema:
+            $ref: '#/definitions/ErrorMessages'
 
     patch:
       tags:
-        -categories
+        - categories
       summary: Edit category
+      parameters:
+        - name: id
+          required: true
+          in: path
+          type: integer
+          schema:
+            type: object
+            properties:
+              name:
+                type: string
+      responses:
+        200:
+          description: Success
+          schema:
+            $ref: '#/definitions/Category'
+        401:
+          description: Unauthorized
+          schema:
+            $ref: '#/definitions/ErrorMessages'
+        403:
+          description: Forbidden
+          schema:
+            $ref: '#/definitions/ErrorMessages'
+        404:
+          description: Not Found
+          schema:
+            $ref: '#/definitions/ErrorMessages'
 
     delete:
       tags:
-        -categories
+        - categories
       summary: Delete category
+      parameters:
+        - name: id
+          required: true
+          in: path
+          type: integer
+      responses:
+        204:
+          description: Success
+          schema:
+            $ref: '#/definitions/Category'
+        401:
+          description: Unauthorized
+          schema:
+            $ref: '#/definitions/ErrorMessages'
+        403:
+          description: Forbidden
+          schema:
+            $ref: '#/definitions/ErrorMessages'
+        404:
+          description: Not Found
+          schema:
+            $ref: '#/definitions/ErrorMessages'
 
   # End of Categories API
 
@@ -155,29 +259,148 @@ paths:
   /tasks/:
     get:
       tags:
-        -tasks
+        - tasks
       summary: List of tasks
+      responses:
+        200:
+          description: Success
+          schema:
+            results:
+              type: array
+              items:
+                $ref: '#/definitions/Task'
+        401:
+          description: Unauthorized
+          schema:
+            $ref: '#/definitions/ErrorMessages'
 
     post:
       tags:
-        -tasks
+        - tasks
       summary: Create task
+      parameters:
+        - name: data
+          in: body
+          schema:
+            type: object
+            required: [
+              name, author
+            ]
+            properties:
+              name:
+                type: string
+              author:
+                type: integer
+              assignee:
+                type: integer
+              category:
+                type: integer
+              deadline:
+                type: date-time
+      responses:
+        200:
+          description: Success
+          schema:
+            $ref: '#/definitions/Task'
+        400:
+          description: Invalid request or parameters
+          schema:
+            $ref: '#/definitions/ErrorMessages'
+        401:
+          description: Unauthorized
+          schema:
+            $ref: '#/definitions/ErrorMessages'
 
   /tasks/{id}/:
     get:
       tags:
-        -tasks
+        - tasks
       summary: Get task
+      parameters:
+        - name: id
+          required: true
+          in: path
+          type: integer
+      responses:
+        200:
+          description: Success
+          schema:
+            $ref: '#/definitions/Task'
+        401:
+          description: Unauthorized
+          schema:
+            $ref: '#/definitions/ErrorMessages'
+        404:
+          description: Not Found
+          schema:
+            $ref: '#/definitions/ErrorMessages'
 
     patch:
       tags:
-        -tasks
+        - tasks
       summary: Edit task
+      parameters:
+        - name: id
+          required: true
+          in: path
+          type: integer
+          schema:
+            type: object
+            properties:
+              name:
+                type: string
+              author:
+                type: integer
+              assignee:
+                type: integer
+              category:
+                type: integer
+              deadline:
+                type: date-time
+      responses:
+        200:
+          description: Success
+          schema:
+            $ref: '#/definitions/Task'
+        401:
+          description: Unauthorized
+          schema:
+            $ref: '#/definitions/ErrorMessages'
+        403:
+          description: Forbidden
+          schema:
+            $ref: '#/definitions/ErrorMessages'
+        404:
+          description: Not Found
+          schema:
+            $ref: '#/definitions/ErrorMessages'
 
     delete:
       tags:
-        -tasks
+        - tasks
       summary: Delete task
+      parameters:
+        - name: id
+          required: true
+          in: path
+          type: integer
+      responses:
+        204:
+          description: Success
+          schema:
+            $ref: '#/definitions/Task'
+        401:
+          description: Unauthorized
+          schema:
+            $ref: '#/definitions/ErrorMessages'
+        403:
+          description: Forbidden
+          schema:
+            $ref: '#/definitions/ErrorMessages'
+        404:
+          description: Not Found
+          schema:
+            $ref: '#/definitions/ErrorMessages'
 
   # End of Tasks API
 
@@ -186,24 +409,107 @@ paths:
   /users/:
     get:
       tags:
-        -users
+        - users
       summary: List of users
+      responses:
+        200:
+          description: Success
+          schema:
+            results:
+              type: array
+              items:
+                $ref: '#/definitions/User'
+        401:
+          description: Unauthorized
+          schema:
+            $ref: '#/definitions/ErrorMessages'
 
   /users/{id}/:
     get:
       tags:
-        -users
+        - users
       summary: Get user
+      parameters:
+        - name: id
+          required: true
+          in: path
+          type: integer
+      responses:
+        200:
+          description: Success
+          schema:
+            $ref: '#/definitions/User'
+        401:
+          description: Unauthorized
+          schema:
+            $ref: '#/definitions/ErrorMessages'
+        404:
+          description: Not Found
+          schema:
+            $ref: '#/definitions/ErrorMessages'
 
     patch:
       tags:
-        -users
+        - users
       summary: Edit user
+      parameters:
+        - name: id
+          required: true
+          in: path
+          type: integer
+          schema:
+            type: object
+            properties:
+              username:
+                type: string
+              email:
+                type: string
+              password:
+                type: string
+      responses:
+        200:
+          description: Success
+          schema:
+            $ref: '#/definitions/Task'
+        401:
+          description: Unauthorized
+          schema:
+            $ref: '#/definitions/ErrorMessages'
+        403:
+          description: Forbidden
+          schema:
+            $ref: '#/definitions/ErrorMessages'
+        404:
+          description: Not Found
+          schema:
+            $ref: '#/definitions/ErrorMessages'
 
     delete:
       tags:
-        -users
+        - users
       summary: Delete user
+      parameters:
+        - name: id
+          required: true
+          in: path
+          type: integer
+      responses:
+        204:
+          description: Success
+          schema:
+            $ref: '#/definitions/Task'
+        401:
+          description: Unauthorized
+          schema:
+            $ref: '#/definitions/ErrorMessages'
+        403:
+          description: Forbidden
+          schema:
+            $ref: '#/definitions/ErrorMessages'
+        404:
+          description: Not Found
+          schema:
+            $ref: '#/definitions/ErrorMessages'
 
   # End of Users API
 
@@ -221,6 +527,36 @@ definitions:
         type: string
       is_active:
         type: boolean
+
+  Category:
+    type: object
+    properties:
+      id:
+        type: integer
+      name:
+        type: string
+      common:
+        type: boolean
+
+  Task:
+    type: object
+    properties:
+      id:
+        type: integer
+      name:
+        type: string
+      author:
+        type: integer
+      assignee:
+        type: integer
+      category:
+        type: integer
+      deadline:
+        type: date-time
+      date_created:
+        type: date-time
+      date_modified:
+        type: date-time
 
   Tokens:
     type: object
