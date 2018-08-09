@@ -1,0 +1,246 @@
+swagger: '2.0'
+info:
+  title: Todoshka
+  description: Documenatation for Todoshka REST API
+  version: 0.1.0
+
+host: localhost
+basePath: /api
+
+tags:
+  - name: auth
+    description: Access Operations
+  - name: categories
+    description: Categories Operations
+  - name: todolists
+    description: TodoLists Operations
+  - name: users
+    description: Users Operations
+
+paths:
+
+  # Auth API
+
+  /auth/register/:
+    post:
+      tags:
+        - auth
+      summary: User registration
+      parameters:
+        - in: body
+          name: data
+          schema:
+            type: object
+            properties:
+              username:
+                description: Username
+                type: string
+              email:
+                description: User email
+                type: string
+              password:
+                description: User password
+                type: string
+            required:
+              - username
+              - email
+              - password
+      responses:
+        '201':
+          description: Success
+        '400':
+          description: Invalid request or parameters
+          schema:
+            $ref: '#/definitions/ErrorMessages'
+
+  /auth/login/:
+    post:
+      tags:
+        - auth
+      summary: User authorization
+      parameters:
+        - in: body
+          name: data
+          schema:
+            type: object
+            properties:
+              username:
+                description: Username
+                type: string
+              password:
+                description: User password
+                type: string
+            required:
+              - username
+              - password
+      responses:
+        '200':
+          description: Success
+          schema:
+            type: object
+            properties:
+              access_token:
+                type: string
+                description: This token must be passed to backend in Authorization header
+              refresh_token:
+                type: string
+                description: This token is used to create new access token on its expiration
+              user:
+                $ref: '#/definitions/User'
+        '400':
+          description: Invalid request or parameters
+          schema:
+            $ref: '#/definitions/ErrorMessages'
+        '401':
+          description: Wrong login or password
+          schema:
+            $ref: '#/definitions/ErrorMessages'
+
+  /auth/refresh/:
+    post:
+      tags:
+        - auth
+      summary: User token refresh
+      parameters:
+        - in: body
+          name: data
+          description: Access token can expire
+          schema:
+            $ref: '#/definitions/Tokens'
+      responses:
+        '200':
+          description: Success
+          schema:
+            $ref: '#/definitions/Tokens'
+        '400':
+          description: Invalid request or parameters
+          schema:
+            $ref: '#/definitions/ErrorMessages'
+
+  # End of Auth API
+
+  # Categories API
+  /categories/:
+    get:
+      tags:
+        -categories
+      summary: List of categories
+
+    post:
+      tags:
+        -categories
+      summary: Create category
+
+  /categories/{id}/:
+    get:
+      tags:
+        -categories
+      summary: Get category
+
+    patch:
+      tags:
+        -categories
+      summary: Edit category
+
+    delete:
+      tags:
+        -categories
+      summary: Delete category
+
+  # End of Categories API
+
+  # TodoLists API
+
+  /todolists/:
+    get:
+      tags:
+        -todolists
+      summary: List of tasks
+
+    post:
+      tags:
+        -todolists
+      summary: Create task
+
+  /todolists/{id}/:
+    get:
+      tags:
+        -todolists
+      summary: Get task
+
+    patch:
+      tags:
+        -todolists
+      summary: Edit task
+
+    delete:
+      tags:
+        -todolists
+      summary: Delete task
+
+  # End of TodoLists API
+
+  # Users API
+
+  /users/:
+    get:
+      tags:
+        -users
+      summary: List of users
+
+  /users/{id}/:
+    get:
+      tags:
+        -users
+      summary: Get user
+
+    patch:
+      tags:
+        -users
+      summary: Edit user
+
+    delete:
+      tags:
+        -users
+      summary: Delete user
+
+  # End of Users API
+
+definitions:
+  User:
+    type: object
+    properties:
+      id:
+        type: integer
+      username:
+        type: string
+      email:
+        type: string
+      password:
+        type: string
+      is_active:
+        type: boolean
+
+  Tokens:
+    type: object
+    properties:
+      access_token:
+        type: string
+      refresh_token:
+        type: string
+
+  ErrorMessages:
+    type: object
+    properties:
+      non_field_errors:
+        type: array
+        items:
+          type: string
+      field_1:
+        type: array
+        items:
+          type: string
+      field_2:
+        type: array
+        items:
+          type: string
