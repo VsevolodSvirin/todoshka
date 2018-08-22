@@ -1,4 +1,4 @@
-version "3.6"
+version: "3.6"
 
 services:
   db:
@@ -6,8 +6,17 @@ services:
     volumes:
       - db:/postgresql/data
 
+  redis:
+    image: redis:alpine
+    expose:
+      - "6379"
+
   web:
+    environment:
+      - DEBUG=1
+      - DJANGO_SECRET_KEY='v2fn-i#fn_onr=@t^ouf+gh_dk^&d8_pw^hwcq%og%65ps6dh+'
     build: .
+    image: app/web
     command: python3 manage.py runserver 0.0.0.0:8000
     volumes:
       - .:/app
@@ -15,3 +24,26 @@ services:
       - "8000:8000"
     depends_on:
       - db
+      - redis
+
+  celery-worker:
+    environment:
+      - DEBUG=1
+      - DJANGO_SECRET_KEY='v2fn-i#fn_onr=@t^ouf+gh_dk^&d8_pw^hwcq%og%65ps6dh+'
+    image: app/web
+    command: celery worker --app=todoshka
+    depends_on:
+      - db
+      - redis
+
+  celery-beat:
+    environment:
+      - DEBUG=1
+      - DJANGO_SECRET_KEY='v2fn-i#fn_onr=@t^ouf+gh_dk^&d8_pw^hwcq%og%65ps6dh+'
+    image: app/web
+    command: celery beat --app=todoshka -s /home/celery/var/run/celerybeat-schedule
+    depends_on:
+      - redis
+
+volumes:
+  db:
