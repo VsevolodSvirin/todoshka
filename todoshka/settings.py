@@ -21,7 +21,6 @@ BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 
 # SECURITY WARNING: keep the secret key used in production secret!
 SECRET_KEY = os.environ.get('DJANGO_SECRET_KEY')
-# SECRET_KEY = 'v2fn-i#fn_onr=@t^ouf+gh_dk^&d8_pw^hwcq%og%65ps6dh+'
 
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
@@ -95,7 +94,10 @@ REST_FRAMEWORK = {
 }
 
 # CELERY SETTINGS
-BROKER_URL = 'redis://localhost:6379/0'
+BROKER_URL = 'redis://{host}:{port}/'.format(
+    host=os.environ.get('REDIS_HOST', 'localhost'),
+    port=os.environ.get('REDIS_PORT', '6379'),
+)
 DEFAULT_FROM_EMAIL = 'its@me.mario'
 CELERY_ACCEPT_CONTENT = ['json']
 CELERY_TASK_SERIALIZER = 'json'
