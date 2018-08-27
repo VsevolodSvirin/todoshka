@@ -102,6 +102,8 @@ DEFAULT_FROM_EMAIL = 'its@me.mario'
 CELERY_ACCEPT_CONTENT = ['json']
 CELERY_TASK_SERIALIZER = 'json'
 CELERY_RESULT_SERIALIZER = 'json'
+CELERY_TIMEZONE = 'UTC'
+CELERY_ENABLE_UTC = True
 
 # Internationalization
 # https://docs.djangoproject.com/en/2.0/topics/i18n/
