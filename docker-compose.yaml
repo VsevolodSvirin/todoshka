@@ -1,0 +1,54 @@
+version: "3.6"
+
+services:
+  db:
+    image: postgres
+    ports:
+      - "5432:5432"
+    volumes:
+      - db:/var/lib/postgresql/data
+
+  redis:
+    image: redis:alpine
+    ports:
+      - "6379:6379"
+
+  web:
+    environment:
+      - DEBUG=1
+      - DJANGO_SECRET_KEY='v2fn-i#fn_onr=@t^ouf+gh_dk^&d8_pw^hwcq%og%65ps6dh+'
+      - REDIS_HOST=redis
+    build: .
+    image: app/web
+    command: python3 manage.py runserver 0.0.0.0:8000
+    volumes:
+      - .:/app
+    ports:
+      - "8000:8000"
+    depends_on:
+      - db
+      - redis
+
+  celery-worker:
+    environment:
+      - DEBUG=1
+      - DJANGO_SECRET_KEY='v2fn-i#fn_onr=@t^ouf+gh_dk^&d8_pw^hwcq%og%65ps6dh+'
+      - REDIS_HOST=redis
+    image: app/web
+    command: celery worker --app=todoshka
+    depends_on:
+      - db
+      - redis
+
+  celery-beat:
+    environment:
+      - DEBUG=1
+      - DJANGO_SECRET_KEY='v2fn-i#fn_onr=@t^ouf+gh_dk^&d8_pw^hwcq%og%65ps6dh+'
+      - REDIS_HOST=redis
+    image: app/web
+    command: celery beat --app=todoshka
+    depends_on:
+      - redis
+
+volumes:
+  db:
