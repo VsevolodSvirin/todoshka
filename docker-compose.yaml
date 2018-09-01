@@ -1,6 +1,13 @@
 version: "3.6"
 
 services:
+  nginx:
+    image: nginx
+    ports:
+      - "8000:8000"
+    depends_on:
+      - web
+
   db:
     image: postgres
     ports:
@@ -20,11 +27,11 @@ services:
       - REDIS_HOST=redis
     build: .
     image: app/web
-    command: python3 manage.py runserver 0.0.0.0:8000
+    command: bash -c "python3 manage.py makemigrations && python manage.py migrate && gunicorn todoshka.wsgi -b 0.0.0.0:8000"
     volumes:
       - .:/app
-    ports:
-      - "8000:8000"
+    expose:
+      - "8000"
     depends_on:
       - db
       - redis
@@ -52,3 +59,4 @@ services:
 
 volumes:
   db:
+  web:
