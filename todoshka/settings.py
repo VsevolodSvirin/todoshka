@@ -124,4 +124,6 @@ USE_TZ = True
 
 STATIC_URL = '/static/'
 
+MEDIA_URL = '/media/'
+
 JWT_LIFE_TIME = 60 * 60  # 1 hour
