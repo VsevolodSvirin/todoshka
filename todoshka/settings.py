@@ -127,4 +127,6 @@ PROJECT_ROOT = os.path.dirname(os.path.abspath(__file__))
 STATIC_URL = '/static/'
 STATIC_ROOT = os.path.join(PROJECT_ROOT, 'static')
 
+MEDIA_URL = '/media/'
+
 JWT_LIFE_TIME = 60 * 60  # 1 hour
