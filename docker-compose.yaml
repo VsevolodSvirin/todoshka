@@ -1,0 +1,90 @@
+version: "3.6"
+
+x-nginx-conf: &x-nginx-conf |
+  upstream web {
+    server web:8000;
+  }
+
+  server {
+
+    location /static/ {
+      autoindex on;
+      alias /static/;
+    }
+
+    location / {
+      proxy_pass http://web/;
+    }
+    listen 8000;
+    server_name localhost;
+  }
+
+
+services:
+  nginx:
+    environment:
+      NGINX_CONF: *x-nginx-conf
+    image: nginx:latest
+    command: sh -c 'echo "$${NGINX_CONF}" > /etc/nginx/conf.d/default.conf && exec nginx -g "daemon off;"'
+    ports:
+      - "8000:8000"
+    volumes:
+      - ./config/nginx:/etc/nginx/conf.d
+      - ./todoshka/static:/static
+    depends_on:
+      - web
+
+  db:
+    image: postgres
+    ports:
+      - "5432:5432"
+    volumes:
+      - db:/var/lib/postgresql/data
+
+  redis:
+    image: redis:alpine
+    ports:
+      - "6379:6379"
+
+  web:
+    environment:
+      - DEBUG=1
+      - DJANGO_SECRET_KEY='v2fn-i#fn_onr=@t^ouf+gh_dk^&d8_pw^hwcq%og%65ps6dh+'
+      - REDIS_HOST=redis
+    build: .
+    image: app/web
+    command: bash -c "python3 manage.py makemigrations && python manage.py migrate && python manage.py collectstatic --noinput && gunicorn todoshka.wsgi -b 0.0.0.0:8000"
+    volumes:
+      - .:/app
+      - ./todoshka/static:/static
+    expose:
+      - "8000"
+    depends_on:
+      - db
+      - redis
+
+  celery-worker:
+    environment:
+      - DEBUG=1
+      - DJANGO_SECRET_KEY='v2fn-i#fn_onr=@t^ouf+gh_dk^&d8_pw^hwcq%og%65ps6dh+'
+      - REDIS_HOST=redis
+    image: app/web
+    command: celery worker --app=todoshka
+    depends_on:
+      - db
+      - redis
+
+  celery-beat:
+    environment:
+      - DEBUG=1
+      - DJANGO_SECRET_KEY='v2fn-i#fn_onr=@t^ouf+gh_dk^&d8_pw^hwcq%og%65ps6dh+'
+      - REDIS_HOST=redis
+    image: app/web
+    command: celery beat --app=todoshka
+    depends_on:
+      - redis
+
+volumes:
+  db:
+  web:
+  nginx:

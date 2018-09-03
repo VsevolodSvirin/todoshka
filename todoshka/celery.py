@@ -15,7 +15,7 @@ app.autodiscover_tasks(lambda: settings.INSTALLED_APPS)
 
 app.conf.beat_schedule = {
     'send-notifications': {
-        'task': 'tasks.tasks.notify',
+        'task': 'tasks.tasks.email_notify',
         'schedule': timedelta(minutes=1),
     },
 }
