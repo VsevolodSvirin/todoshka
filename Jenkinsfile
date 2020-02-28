@@ -11,6 +11,11 @@ pipeline {
                 checkout scm
             }
         }
+        stage('Build') {
+            steps {
+                sh 'pip install -r requirements.txt'
+            }
+        }
         stage('Lint') {
             steps {
                 sh 'flake8'
@@ -18,7 +23,6 @@ pipeline {
         }
         stage('Test') {
             steps {
-                sh 'pip install -r requirements.txt'
                 sh 'python manage.py test'
             }
         }
