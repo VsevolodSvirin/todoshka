@@ -25,7 +25,7 @@ class TaskSerializerTestCase(TestCase):
             'name': 'My ToDo List',
             'author': self.user,
             'assignee': self.assignee,
-            'deadline': datetime.datetime(2020, 1, 1, 0, 0, 0, 0, tzinfo=UTC)
+            'deadline': datetime.datetime(2025, 1, 1, 0, 0, 0, 0, tzinfo=UTC)
         }
 
         self.todo_obj = Task.objects.create(**self.todo_attrs)
@@ -40,7 +40,7 @@ class TaskSerializerTestCase(TestCase):
         data = self.todo_serialized.data
 
         self.assertEqual(set(data.keys()), {'id', 'name', 'author', 'assignee', 'category', 'deadline',
-                                            'date_created', 'date_modified'})
+                                            'date_created', 'date_modified', 'image'})
 
     def test_fields_content(self):
         data = self.todo_serialized.data
